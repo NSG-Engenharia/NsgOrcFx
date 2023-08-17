@@ -18,42 +18,23 @@ __status__ = "Development"
 import OrcFxAPI as orc
 from typing import Union
 
-class OrcaFlexObject(orc.OrcaFlexObject):
-    Name: str
-    """Object name"""
+from OrcFxAPI import Handle, ObjectType, OrcaFlexObject
 
-class OrcaFlexGeneralObject(OrcaFlexObject):
-    StageDuration: list[float]
-    """Analysis -> Stages -> Duration (s)"""
+from NsgOrcFx.classes import *
+from NsgOrcFx.sortlines import *
 
 
-class OrcaFlexLineObject(OrcaFlexObject, orc.OrcaFlexLineObject):
-    pass
-
-class FatigueAnalysis(orc.FatigueAnalysis):
-    CriticalDamageFactor: float
-    """Analysis Data -> Critical damage"""
-    ThetaCount: int
-    """Analysis Data -> Number of thetas"""
-    ArclengthIntervalsCount: int
-    """Analysis Data -> No. of arc length intervals"""
-    AnalysisType: str
-    """Analysis Type = 'Regular', 'Rainflow', 'Spectral (frequency domain)', or 'Spectral (response RAOs)'"""
-    LoadCaseCount: int 
-    """Load cases -> Number of load cases"""
-    LoadCaseFileName: list[str]
-    """Load cases -> Load case file name"""
-    LoadCaseLineName: list[str]
-    """Load cases -> Line name"""
-    PeriodFrom: list[float]
-    """Load cases -> Simulation periods (s) -> From"""
-    PeriodTo: list[float]
-    """Load cases -> Simulation periods (s) -> To"""
-    LoadCaseExposureTime: list[float]
-    """Load cases -> Exposure time (hours)"""
 
 class Model(orc.Model):
     general: OrcaFlexGeneralObject
+   
+    def __getitem__(self, name: str) -> OrcaFlexObject:
+        return OrcaFlexObject(super().__getitem__(name)) 
+    
+    def findLineByName(self, name: str) -> OrcaFlexLineObject:
+        """Find a line object by its name"""
+        obj = self[name]
+        return OrcaFlexLineObject(obj)
     
     def getAllLines(self) -> list[OrcaFlexLineObject]:
         """Returns a list of all line objects"""
@@ -65,22 +46,28 @@ class Model(orc.Model):
 
     def getLineList(
             self, 
-            groupName: Union[str, None] = None,
+            groupName: Union[str, None] = None, 
             includeSubgroups: bool = False
             ) -> list[OrcaFlexLineObject]:
         """
-        Returns all lines in the model
+        Returns all lines in the model which belongs to the defined group with or not its subgroups
         """            
         result: list[OrcaFlexObject] = []
         if groupName:
-            selectedList = list(self[groupName].GroupChildren())
+            selectedList = list(self[groupName].GroupChildren(recurse=includeSubgroups))
         else:
             selectedList = list(self.objects)
 
         for obj in selectedList:
             if obj.type == orc.ObjectType.Line:
-                result.append(obj)
+                result.append(OrcaFlexLineObject(obj))
             elif groupName and includeSubgroups and obj.type == orc.ObjectType.BrowserGroup:
                 result.extend(self.getLineList(obj.Name))
             
         return result
+    
+    def sortPathInterconnectedLines(
+            self,
+            lineList: list[OrcaFlexLineObject]
+            ) -> list[OrcaFlexLineObject]:
+        return sortPathInterconnectedLines(lineList)
