@@ -70,4 +70,8 @@ class Model(orc.Model):
             self,
             lineList: list[OrcaFlexLineObject]
             ) -> list[OrcaFlexLineObject]:
+        """
+        Returns a sorted list of interconnected lines, based on its connections (e.g., path from first to last)
+        The result is unpredictable if not all lines are connected or if there are connection between more than two lines
+        """        
         return sortPathInterconnectedLines(lineList)

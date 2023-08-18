@@ -143,4 +143,5 @@ def sortPathInterconnectedLines(
                     break
                     
 
-    print(path)
+    # print(path)
+    return path
