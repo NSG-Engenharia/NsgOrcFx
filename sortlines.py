@@ -89,8 +89,6 @@ def sortPathInterconnectedLines(
     """
     n = len(lineList)
     _lineList = lineList.copy()
-    # _endAconnectedToList = [n*None]
-    # _endBconnectedToList = [n*None]
 
     # find the end lines (connected to only one)
     _endLines: list[list[OrcaFlexLineObject, str]] = []
@@ -116,8 +114,7 @@ def sortPathInterconnectedLines(
         for line, _ in _endLines:
             txt += f'Line {line.Name}. '
         raise Exception(f'There are more than two lines with only one connection. Cannot define a path.\n {txt}')
-   
-    print(_endLines)
+  
 
     # TODO: choose the top line
     line1, end = _endLines[0][0], _endLines[0][1]
@@ -134,14 +131,10 @@ def sortPathInterconnectedLines(
         isConnected = False
         for line2 in _lineList:
             if line1.Name != line2.Name:
-                if line1.Name == 'Bm224' and line2.Name == 'Production flexible riser':
-                    print('last')
                 isConnected, end1, end2 = __isInterConnected(line1, line2, end=='End A', end=='End B')
                 if isConnected:
                     path.append(line2)
                     line1, end = line2, getOtherEnd(end2)
                     break
-                    
 
-    # print(path)
     return path
