@@ -1,4 +1,6 @@
+from __future__ import annotations
 import OrcFxAPI as orc
+from typing import Optional, Union
 
 class OrcaFlexObject(orc.OrcaFlexObject):
     Name: str
@@ -60,6 +62,15 @@ class OrcaFlexLineObject(OrcaFlexObject, orc.OrcaFlexLineObject):
         """Total length of the line"""
         return self.CumulativeLength[-1]
 
+    def CreateClone(
+            self, 
+            name: Optional[str] = None, 
+            model: Optional[orc.Model] = None
+            ) -> OrcaFlexLineObject:
+        newObj = super().CreateClone(name, model)
+        newLineObj = OrcaFlexLineObject(newObj)
+        return newLineObj
+
 class FatigueAnalysis(orc.FatigueAnalysis):
     CriticalDamageFactor: float
     """Analysis Data -> Critical damage"""
@@ -94,3 +105,5 @@ class FatigueAnalysis(orc.FatigueAnalysis):
     """Analysis data -> Stress correction factors -> Thickness factor"""
     AnalysisDataSNcurve: list[str]
     """Analysis data -> Stress correction factors -> S-N curve"""
+
+

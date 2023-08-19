@@ -4,6 +4,7 @@
 #
 #
 """
+from __future__ import annotations
 
 __author__ = "NSG Engenharia"
 __copyright__ = "Copyright 2023"
@@ -15,10 +16,8 @@ __email__ = "gabriel.nascimento@nsgeng.com"
 __status__ = "Development"
 
 
-import OrcFxAPI as orc
 from typing import Union
-
-from OrcFxAPI import Handle, ObjectType, OrcaFlexObject
+import OrcFxAPI as orc
 
 from NsgOrcFx.classes import *
 from NsgOrcFx.sortlines import *
@@ -36,9 +35,9 @@ class Model(orc.Model):
         obj = self[name]
         return OrcaFlexLineObject(obj)
     
-    def getAllLines(self) -> list[OrcaFlexLineObject]:
+    def getAllLines(self) -> LineSelection:
         """Returns a list of all line objects"""
-        lineList = []
+        lineList = LineSelection(self)
         for obj in self.objects:
             if obj.type == orc.ObjectType.Line:
                 lineList.append(obj)
@@ -48,30 +47,77 @@ class Model(orc.Model):
             self, 
             groupName: Union[str, None] = None, 
             includeSubgroups: bool = False
-            ) -> list[OrcaFlexLineObject]:
+            ) -> LineSelection:
         """
         Returns all lines in the model which belongs to the defined group with or not its subgroups
         """            
-        result: list[OrcaFlexObject] = []
+        result = LineSelection(self)
         if groupName:
-            selectedList = list(self[groupName].GroupChildren(recurse=includeSubgroups))
+            grouObj = self[groupName]
+            selectedList = list(grouObj.GroupChildren(recurse=includeSubgroups))
         else:
             selectedList = list(self.objects)
 
         for obj in selectedList:
             if obj.type == orc.ObjectType.Line:
                 result.append(OrcaFlexLineObject(obj))
-            elif groupName and includeSubgroups and obj.type == orc.ObjectType.BrowserGroup:
-                result.extend(self.getLineList(obj.Name))
+            # elif groupName and includeSubgroups and obj.type == orc.ObjectType.BrowserGroup:
+            #     result.extend(self.getLineList(obj.Name))
             
         return result
     
     def sortPathInterconnectedLines(
             self,
             lineList: list[OrcaFlexLineObject]
-            ) -> list[OrcaFlexLineObject]:
+            ) -> LineSelection:
         """
         Returns a sorted list of interconnected lines, based on its connections (e.g., path from first to last)
         The result is unpredictable if not all lines are connected or if there are connection between more than two lines
-        """        
-        return sortPathInterconnectedLines(lineList)
+        """              
+        newList = sortPathInterconnectedLines(lineList)
+        returnList = LineSelection(self)
+        for obj in newList: returnList.append(obj)
+        return returnList
+    
+
+class LineSelection(list[OrcaFlexLineObject]):
+    def __init__(self, model: Model):
+        super().__init__()
+        self.model = model
+
+    def selectLinesByPosition(
+            self,
+            xLimits: tuple[Union[float,None], Union[float,None]] = (None, None),
+            yLimits: tuple[Union[float,None], Union[float,None]] = (None, None),
+            zLimits: tuple[Union[float,None], Union[float,None]] = (None, None)
+            ) -> list[OrcaFlexLineObject]:
+        """
+        Select lines in the model based on its ends position
+        """
+        if not len(self):
+            raise Exception('Error! This selction is empty.')
+        
+        # model = Model(handle=self[0].modelHandle)
+
+        cloneModel = orc.Model() # creates a 'dummy' model (only to set fixed connections and get global coords)
+        resultList = LineSelection()
+        for line in self:
+            clone = line.CreateClone(model=cloneModel) # copy object to 'dummy' model
+            clone.EndAConnection = 'Fixed' # ensures global coordinates
+            clone.EndBConnection = 'Fixed'
+            minLimits = [xLimits[0], yLimits[0], zLimits[0]]            
+            maxLimits = [xLimits[1], yLimits[1], zLimits[1]]
+            xVls = [clone.EndAX, clone.EndBX]
+            yVls = [clone.EndAY, clone.EndBY]
+            zVls = [clone.EndAZ, clone.EndBZ]
+            values = [xVls, yVls, zVls]
+            include = True
+            for vEnds, minLim, maxLim in zip(values, minLimits, maxLimits):
+                for v in vEnds:
+                    if minLim: # check min
+                        if v < minLim: include = False
+                    if maxLim: # check max
+                        if v > maxLim: include = False
+            if include: resultList.append(line)
+            cloneModel.DestroyObject(clone) # free memory
+        return resultList

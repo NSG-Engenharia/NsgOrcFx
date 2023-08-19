@@ -136,5 +136,5 @@ def sortPathInterconnectedLines(
                     path.append(line2)
                     line1, end = line2, getOtherEnd(end2)
                     break
-
+    
     return path
