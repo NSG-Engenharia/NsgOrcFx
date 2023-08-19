@@ -100,7 +100,7 @@ class LineSelection(list[OrcaFlexLineObject]):
         # model = Model(handle=self[0].modelHandle)
 
         cloneModel = orc.Model() # creates a 'dummy' model (only to set fixed connections and get global coords)
-        resultList = LineSelection()
+        resultList = LineSelection(self.model)
         for line in self:
             clone = line.CreateClone(model=cloneModel) # copy object to 'dummy' model
             clone.EndAConnection = 'Fixed' # ensures global coordinates
