@@ -85,26 +85,64 @@ class LineSelection(list[OrcaFlexLineObject]):
         super().__init__()
         self.model = model
 
+    def setGroup(self, groupName: str) -> None:
+        group = self.model[groupName]
+        for line in self:
+            line.groupParent = group
+
+    def setMeshSize(
+            self,
+            nSegs: int = None,
+            targetLength: float = None
+            ):
+        """Set the length/number of segments for all sections of all lines in this selection"""
+        for line in self:
+            line.setMeshSize(nSegs, targetLength)
+
+    def selectByName(
+            self, 
+            name: Union[str, list[str]]
+            ) -> LineSelection:
+        if type(name) == str: nameList = [name]
+        else: nameList = name
+        resultList = LineSelection(self.model)
+        for line in self:
+            if line.Name in nameList:
+                resultList.append(line)
+        return resultList
+
+    def selectByType(
+            self, lineType: Union[list[str], str], 
+            partialMatch: bool = False
+            ) -> LineSelection:
+        if type(lineType) == str: lineTypeGroup = [lineType]
+        else: lineTypeGroup = lineType
+        resultList = LineSelection(self.model)
+        for line in self:
+            for lt in line.LineType:
+                if strInStrList(lt, lineTypeGroup, partialMatch):
+                    resultList.append(line)
+        return resultList
+
     def selectLinesByPosition(
             self,
             xLimits: tuple[Union[float,None], Union[float,None]] = (None, None),
             yLimits: tuple[Union[float,None], Union[float,None]] = (None, None),
             zLimits: tuple[Union[float,None], Union[float,None]] = (None, None)
-            ) -> list[OrcaFlexLineObject]:
+            ) -> LineSelection:
         """
         Select lines in the model based on its ends position
         """
         if not len(self):
             raise Exception('Error! This selction is empty.')
-        
-        # model = Model(handle=self[0].modelHandle)
 
-        cloneModel = orc.Model() # creates a 'dummy' model (only to set fixed connections and get global coords)
+        # cloneModel = orc.Model() # creates a 'dummy' model (only to set fixed connections and get global coords)
         resultList = LineSelection(self.model)
         for line in self:
-            clone = line.CreateClone(model=cloneModel) # copy object to 'dummy' model
+            # clone = line.CreateClone(model=cloneModel) # copy object to 'dummy' model
+            clone = line.CreateClone() # copy object to 'dummy' model
             clone.EndAConnection = 'Fixed' # ensures global coordinates
-            clone.EndBConnection = 'Fixed'
+            clone.EndBConnection = 'Fixed' # ensures global coordinates
             minLimits = [xLimits[0], yLimits[0], zLimits[0]]            
             maxLimits = [xLimits[1], yLimits[1], zLimits[1]]
             xVls = [clone.EndAX, clone.EndBX]
@@ -114,10 +152,12 @@ class LineSelection(list[OrcaFlexLineObject]):
             include = True
             for vEnds, minLim, maxLim in zip(values, minLimits, maxLimits):
                 for v in vEnds:
-                    if minLim: # check min
+                    if minLim != None: # check min
                         if v < minLim: include = False
-                    if maxLim: # check max
+                    if maxLim != None: # check max
                         if v > maxLim: include = False
             if include: resultList.append(line)
-            cloneModel.DestroyObject(clone) # free memory
+            # cloneModel.DestroyObject(clone) # free memory
+            self.model.DestroyObject(clone) # free memory
+
         return resultList

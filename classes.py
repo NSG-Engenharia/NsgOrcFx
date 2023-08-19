@@ -53,10 +53,27 @@ class OrcaFlexLineObject(OrcaFlexObject, orc.OrcaFlexLineObject):
     EndAReleaseStage: int
     """End connections -> End A -> Release at start of stage"""
     EndBReleaseStage: int
-    """End connections -> End B -> Release at start of stage"""
-    
+    """End connections -> End B -> Release at start of stage"""    
+    NumberOfSections: int
+    """Structure -> Sections -> Number of sections"""
+    LineType: list[str]
+    """Structure -> Line type"""
+    Weighting: list[float]
+    """Structure -> Weighting (when LengthAndEndOrientations = 'Calculated from end positions')"""
+    Length: list[float]
+    """Structure -> Length"""
+    ExpansionFactor: list[float]
+    """Structure -> Expansion Factor"""
+    TargetSegmentLength: list[float]
+    """Structure -> Target segment length"""
+    NumberOfSegments: list[int]
+    """Structure -> Number of segments"""
+    ClashCheck: list[str]
+    """Structure -> Clash check"""
     CumulativeLength: list[float]
     """Structure -> Cumulative values -> Length (m)"""
+    CumulativeNumberOfSegments: list[float]
+
 
     def totalLength(self) -> float:
         """Total length of the line"""
@@ -70,6 +87,22 @@ class OrcaFlexLineObject(OrcaFlexObject, orc.OrcaFlexLineObject):
         newObj = super().CreateClone(name, model)
         newLineObj = OrcaFlexLineObject(newObj)
         return newLineObj
+
+    def setMeshSize(
+            self,
+            nSegs: int = None,
+            targetLength: float = None
+            ):
+        """Set the length/number of segments for all sections"""
+        for i in range(self.NumberOfSections):
+            if nSegs != None:
+                self.TargetSegmentLength[i] = orc.OrcinaDefaultReal()
+                self.NumberOfSegments[i] = nSegs
+            elif targetLength != None:
+                self.TargetSegmentLength[i] = targetLength
+            else:
+                raise Exception('Error! nSegs or targetLengh must be provided.')
+
 
 class FatigueAnalysis(orc.FatigueAnalysis):
     CriticalDamageFactor: float
