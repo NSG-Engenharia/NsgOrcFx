@@ -9,8 +9,17 @@ class OrcaFlexObject(orc.OrcaFlexObject):
         super().__init__(object.modelHandle, object.handle, object.type)
 
 class OrcaFlexGeneralObject(OrcaFlexObject):
+    StageCount: int
+    """Analysis -> Stages -> Number of stages"""
     StageDuration: list[float]
     """Analysis -> Stages -> Duration (s)"""
+    ImplicitConstantTimeStep: float
+    """Dynamics -> Parameters -> Time step (s)"""
+    ImplicitConstantMaxNumOfIterations: int
+    """Dynamics -> Parameters -> Maximum number of iterations"""
+    ImplicitTolerance: float
+    """Dynamics -> Parameters -> Tolerance"""
+
 
 
 class OrcaFlexLineObject(OrcaFlexObject, orc.OrcaFlexLineObject):
@@ -73,6 +82,9 @@ class OrcaFlexLineObject(OrcaFlexObject, orc.OrcaFlexLineObject):
     CumulativeLength: list[float]
     """Structure -> Cumulative values -> Length (m)"""
     CumulativeNumberOfSegments: list[float]
+    """Structure -> Cumulative values -> Number of segments"""
+    LogResults: str
+    """Results -> Log results = 'Yes' (default) or 'No'"""
 
 
     def totalLength(self) -> float:
@@ -87,6 +99,11 @@ class OrcaFlexLineObject(OrcaFlexObject, orc.OrcaFlexLineObject):
         newObj = super().CreateClone(name, model)
         newLineObj = OrcaFlexLineObject(newObj)
         return newLineObj
+
+    def setLog(self, logResults: bool) -> None:
+        """Defines if the results of the line should be stored (logged) or not"""
+        if logResults: self.LogResults = 'Yes'
+        else: self.LogResults = 'No'
 
     def setMeshSize(
             self,

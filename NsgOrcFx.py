@@ -90,6 +90,11 @@ class LineSelection(list[OrcaFlexLineObject]):
         for line in self:
             line.groupParent = group
 
+    def setLog(self, logResults: bool) -> None:
+        """Defines if the results of the line should be stored (logged) or not for all lines in this selection"""
+        for line in self:
+            line.setLog(logResults)
+
     def setMeshSize(
             self,
             nSegs: int = None,
