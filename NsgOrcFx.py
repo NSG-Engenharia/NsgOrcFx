@@ -21,11 +21,24 @@ import OrcFxAPI as orc
 
 from NsgOrcFx.classes import *
 from NsgOrcFx.sortlines import *
+from NsgOrcFx.objauxfuncs import *
 
 
+# ==== AUXILIARY METHODS ==== #
+class AuxFuncs:
+    def checkOrCreateFolder(self, path: str) -> bool:
+        """
+        Check if the folder exists and, case not, try to create
+        Returns false if don't exists and can't create
+        """
+        return afCheckOrCreateFolder(path)
 
+auxfuncs = AuxFuncs()
+
+# ==== MODEL CLASS ==== #
 class Model(orc.Model):
     general: OrcaFlexGeneralObject
+    auxfuncs = auxfuncs
    
     def __getitem__(self, name: str) -> OrcaFlexObject:
         return OrcaFlexObject(super().__getitem__(name)) 
@@ -40,7 +53,7 @@ class Model(orc.Model):
         lineList = LineSelection(self)
         for obj in self.objects:
             if obj.type == orc.ObjectType.Line:
-                lineList.append(obj)
+                lineList.append(OrcaFlexLineObject(obj))
         return lineList
 
     def getLineList(
@@ -52,18 +65,19 @@ class Model(orc.Model):
         Returns all lines in the model which belongs to the defined group with or not its subgroups
         """            
         result = LineSelection(self)
-        if groupName:
-            grouObj = self[groupName]
-            selectedList = list(grouObj.GroupChildren(recurse=includeSubgroups))
-        else:
-            selectedList = list(self.objects)
+        # if groupName:
+        #     grouObj = self[groupName]
+        #     selectedList = list(grouObj.GroupChildren(recurse=includeSubgroups))
+        # else:
+        #     selectedList = list(self.objects)
 
-        for obj in selectedList:
-            if obj.type == orc.ObjectType.Line:
-                result.append(OrcaFlexLineObject(obj))
-            # elif groupName and includeSubgroups and obj.type == orc.ObjectType.BrowserGroup:
-            #     result.extend(self.getLineList(obj.Name))
-            
+        # for obj in selectedList:
+        #     if obj.type == orc.ObjectType.Line:
+        #         result.append(OrcaFlexLineObject(obj))
+        #     # elif groupName and includeSubgroups and obj.type == orc.ObjectType.BrowserGroup:
+        #     #     result.extend(self.getLineList(obj.Name))
+
+        getLinesToList(self, groupName, includeSubgroups, result)
         return result
     
     def sortPathInterconnectedLines(
@@ -166,3 +180,5 @@ class LineSelection(list[OrcaFlexLineObject]):
             self.model.DestroyObject(clone) # free memory
 
         return resultList
+
+
