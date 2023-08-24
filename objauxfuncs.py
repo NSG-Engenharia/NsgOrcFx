@@ -13,7 +13,7 @@ def getLinesToList(
     Returns all lines in the model which belongs to the defined group with or not its subgroups
     """            
     # result = LineSelection(self)
-    if not lineList: 
+    if lineList == None: 
         lineList: list[OrcaFlexLineObject] = []
 
     if groupName:
