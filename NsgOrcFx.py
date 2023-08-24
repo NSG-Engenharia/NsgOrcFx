@@ -64,7 +64,6 @@ class Model(orc.Model):
         """
         Returns all lines in the model which belongs to the defined group with or not its subgroups
         """            
-        result = LineSelection(self)
         # if groupName:
         #     grouObj = self[groupName]
         #     selectedList = list(grouObj.GroupChildren(recurse=includeSubgroups))
@@ -76,7 +75,7 @@ class Model(orc.Model):
         #         result.append(OrcaFlexLineObject(obj))
         #     # elif groupName and includeSubgroups and obj.type == orc.ObjectType.BrowserGroup:
         #     #     result.extend(self.getLineList(obj.Name))
-
+        result = LineSelection(self)
         getLinesToList(self, groupName, includeSubgroups, result)
         return result
     
@@ -93,6 +92,34 @@ class Model(orc.Model):
         for obj in newList: returnList.append(obj)
         return returnList
     
+
+    def getUnconnectedConstraints(self) -> list[OrcaFlexObject]:
+        """
+        Returns the list of constraints to which there is not a line connected
+        """
+        constraintChildren = {}
+        for obj in self.objects:
+            if obj.type == orc.ObjectType.Constraint:
+                constraintChildren[obj.name] = 0
+        
+        lines = self.getLineList()  
+        for line in lines:
+            for endObj in [line.EndAConnection, line.EndBConnection]:
+                if endObj in constraintChildren:
+                    constraintChildren[endObj] += 1
+
+        resultList = []
+        for constraint, n in constraintChildren.items():
+            if n == 0:
+                resultList.append(constraint)
+
+        return resultList
+    
+    def deleteObjs(self, objects: list[str | OrcaFlexObject]):
+        for obj in objects:
+            self.DestroyObject(obj)
+
+
 
 class LineSelection(list[OrcaFlexLineObject]):
     def __init__(self, model: Model):
