@@ -20,7 +20,8 @@ class OrcaFlexGeneralObject(OrcaFlexObject):
     ImplicitTolerance: float
     """Dynamics -> Parameters -> Tolerance"""
 
-
+class OrcaFlexConstraint(OrcaFlexObject):
+    pass
 
 class OrcaFlexLineObject(OrcaFlexObject, orc.OrcaFlexLineObject):
     EndAConnection: str 
