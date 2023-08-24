@@ -145,9 +145,16 @@ def __printWeightReport(weight: WeightReport, outFile: str=None) -> None:
     __print('', file)
 
 
-def genWeightReport(model: orc.Model, outFile: str=None, msgFunc: FunctionType=None) -> None:
+def genWeightReport(
+        model: orc.Model, 
+        lineList: list[OrcaFlexLineObject] = None,
+        outFile: str=None, 
+        msgFunc: FunctionType=None
+        ) -> None:
+    """Generates a report of the model weight sum"""
     weights = WeightReport()
-    lineList = __getLineObjList(model)
+    if lineList == None:
+        lineList = __getLineObjList(model)
     for line in lineList:
         __getLineWeight(line, weights)
 
