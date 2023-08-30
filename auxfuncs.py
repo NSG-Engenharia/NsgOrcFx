@@ -1,6 +1,59 @@
 import os
+import ctypes
 import numpy as np
 import OrcFxAPI as orc
+
+__char = ctypes.c_wchar
+__letters = 'abcdefghijklimnoprstuvwxyz'
+
+def getOrcaVersion() -> str:
+    """Return the installed OrcaFlex version as string"""
+    global __char, DLLVersion
+    _charArray16 = (__char * 16)()
+    OK = ctypes.c_long()
+    Status = ctypes.c_long()
+    orc._GetDLLVersion(None, 
+                        _charArray16,
+                        ctypes.byref(OK), 
+                        ctypes.byref(Status))
+    DLLVersion = str()
+    for i in range(16): 
+        c = _charArray16[i]
+        if c != '\x00': DLLVersion += c
+    return DLLVersion
+
+def __versionStrToNum(version: str):
+    vernum = str()
+    verletter = str()        
+    for c in version:
+        if __letters.find(c) < 0:
+            vernum += c
+    else:
+        verletter += c
+        letterpos = __letters.find(c)
+
+    return float(vernum + str(letterpos))
+
+def getOrcaVersionAsFloat() -> float:
+    """Return the installed OrcaFlex version as float"""
+    versionTxt = getOrcaVersion()
+    __versionStrToNum(versionTxt)
+
+def checkOrcaFlexVersion(requiredVersion: str) -> bool:
+    """Return True if the installed version of OrcaFlex is equal or newer than the required"""
+    return __isNewerOrEqualTo(requiredVersion)
+
+def __isNewerOrEqualTo(version: str) -> bool:
+    """
+    Verifies if the current version of OrcFxAPI.dll is equal or newer then the required version
+    * version: minimum required version of OrcFxAPI.dll
+    """
+    actualver = getOrcaVersion()
+    if __versionStrToNum(actualver) >= __versionStrToNum(version):
+        return True
+    else:
+        return False    
+
 
 def isConnectedToObj(connection: str) -> bool:
     """Returns true if the connection refers to other object"""

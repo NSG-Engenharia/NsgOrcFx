@@ -17,12 +17,16 @@ __status__ = "Development"
 
 
 from typing import Union
+import ctypes
 import OrcFxAPI as orc
 
 from NsgOrcFx.classes import *
 from NsgOrcFx.sortlines import *
 from NsgOrcFx.objauxfuncs import *
 
+
+# ======= CONSTANTS ======== #
+requiredOrcFxVer = '11.3a'
 
 # ==== AUXILIARY METHODS ==== #
 class AuxFuncs:
@@ -40,6 +44,15 @@ class Model(orc.Model):
     general: OrcaFlexGeneralObject
     auxfuncs = auxfuncs
    
+    def __checkOrcaFlexVersion(self) -> bool:
+        """Return True if the installed version of OrcaFlex is equal or newer than the required"""
+        if not checkOrcaFlexVersion(requiredOrcFxVer):
+            raise Exception(f'The OrcaFlex version is older then {requiredOrcFxVer}.')    
+
+    def getOrcaVersion() -> str:
+        """Return the installed OrcaFlex version as string"""
+        return getOrcaVersion()
+
     def __getitem__(self, name: str) -> OrcaFlexObject:
         return OrcaFlexObject(super().__getitem__(name)) 
     
