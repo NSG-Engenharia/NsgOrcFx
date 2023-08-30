@@ -1,6 +1,9 @@
 from __future__ import annotations
-import OrcFxAPI as orc
+import pandas as pd
 from typing import Optional, Union
+import OrcFxAPI as orc
+import NsgOrcFx.sncurves as SNCurves
+
 
 class OrcaFlexObject(orc.OrcaFlexObject):
     Name: str
@@ -157,4 +160,109 @@ class FatigueAnalysis(orc.FatigueAnalysis):
     AnalysisDataSNcurve: list[str]
     """Analysis data -> Stress correction factors -> S-N curve"""
 
+    SNcurveCount: int
+    """S-N curves -> S-N curves -> Count"""
+    SNcurveName: list[str]
+    """S-N curves -> S-N curves -> Names"""
+    SNcurveSpecificationMethod: str
+    """S-N curves -> Data for S-N curve -> Specified by ('Parameters' or 'Table')"""
+    SNcurvem1: float
+    """S-N curves -> Data for S-N curve -> S-N curve parameters -> Low cycle region < N cycles -> m1"""
+    SNcurveloga1: float
+    """S-N curves -> Data for S-N curve -> S-N curve parameters -> Low cycle region < N cycles -> log(a1)"""
+    SNcurveRegionBoundary: float
+    """S-N curves -> Data for S-N curve -> S-N curve parameters -> Region boundary, N (cycles)"""   
+    SNcurvem2: float
+    """S-N curves -> Data for S-N curve -> S-N curve parameters -> Low cycle region < N cycles -> m2"""
+    SNcurveloga2: float
+    """S-N curves -> Data for S-N curve -> S-N curve parameters -> Low cycle region < N cycles -> log(a2)"""
+    SNcurveEnduranceLimit: float
+    """S-N curves -> Data for S-N curve -> S-N curve parameters -> Endurance limit"""
+    SNcurveMeanStressModel: str 
+    """S-N curves -> Data for S-N curve -> Mean stress model: 'None'; 'Goodman'; 'Soderberg'; 'Gerber'; 'Smith-Watson-Topper'"""
+
+    def __selectSNCurveByName(self, name: str, environment: str) -> SNCurves.SNCurve:
+        """Name (e.g, 'F1') and environment ('air' or 'seawater')"""
+        return SNCurves.selectSNCurveByName(name, environment)
+
+
+    def setSNCurve(self, SNCurve: SNCurves.SNCurve) -> None:
+        """
+        Set the parameters of the selected S-N curve to the analysis
+        """
+        SNCurve.setToAnalysis(self)
+
+    def setSNCurveByNameAndEnv(self, name: str, environment: str) -> None:
+        """
+        Set the parameters the S-N curve selected based on its name (e.g., 'F3')
+        and environment ('air' or 'seawater')
+        """
+        SNCurve = self.__selectSNCurveByName(name, environment)
+        self.setSNCurve(SNCurve)
+
+
+    def totalExposureTime(self) -> float:
+        """Sum of exposure time of each load case"""
+        s = 0
+        for e in self.LoadCaseExposureTime: s += e
+        return s
+
+    def nodeArcLengthList(self) -> list[float]:
+        """
+        Returns a list with the arc length of each node
+        """
+        arcLList: list[float] = []
+        for pointDetails in self.outputPointDetails:
+            arcLList.append(pointDetails[0])
+        return arcLList
+
+    def getArcLengthDamageLifeList(self) -> list[list[float]]:
+        """
+        Returns a list of three parameters (table columns): 
+        * arc length: position (meters) of each node
+        * damage: maximum damage arround the section circunference of each node
+        * life: minimum life (years) arround the section cicrunference of each node 
+        """
+        arcLengthList = self.nodeArcLengthList()
+        zdlList: list[list[float]] = []
+        secsPerYear = 365.25*24*3600 # used to the conversion from seconds to years
+
+        for nodeDamageRst, z in zip(self.overallDamage, arcLengthList):
+            d_max = 0.0
+            l_min = nodeDamageRst[0][1]
+            for d, l in nodeDamageRst: # max around the circunference
+                d_max = max(d_max, d) 
+                l_min = min(l_min, l)
+            zdlList.append([z, d_max, l_min/secsPerYear])
+
+        return zdlList
+    
+    def getDamageList(self) -> list[float]:
+        """
+        Returns a list with the calculated damage in each node
+        """
+        zdlList =  self.getArcLengthDamageLifeList()
+        damageList: list[float] = []
+        for _, d, _ in zdlList: damageList.append(d)
+        return damageList
+
+    def getLifeList(self) -> list[float]:
+        """
+        Returns a list with the calculated life (years) in each node
+        """
+        zdlList =  self.getArcLengthDamageLifeList()
+        lifeList: list[float] = []
+        for _, _, l in zdlList: lifeList.append(l)
+        return lifeList
+
+    def getArcLengthDamageLifeListAsDF(self) -> pd.DataFrame:
+        """
+        Returns a DataFrame of three parameters (table columns): 
+        * arc length: position (meters) of each node
+        * damage: maximum damage arround the section circunference of each node
+        * life: minimum life (years) arround the section cicrunference of each node 
+        """        
+        zdlList = self.getArcLengthDamageLifeList()
+        cols = ['Arc length (m)', 'Damage', 'Life (years)']
+        return pd.DataFrame(zdlList, columns=cols)
 
