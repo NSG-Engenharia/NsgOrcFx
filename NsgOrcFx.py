@@ -23,6 +23,7 @@ import OrcFxAPI as orc
 from NsgOrcFx.classes import *
 from NsgOrcFx.sortlines import *
 from NsgOrcFx.objauxfuncs import *
+import NsgOrcFx.environment as envtools
 
 
 # ======= CONSTANTS ======== #

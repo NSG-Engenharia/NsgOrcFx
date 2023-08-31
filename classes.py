@@ -125,6 +125,22 @@ class OrcaFlexLineObject(OrcaFlexObject, orc.OrcaFlexLineObject):
                 raise Exception('Error! nSegs or targetLengh must be provided.')
 
 
+
+    def getEndPositions(self) -> tuple[list[float], list[float]]:
+        """
+        Returns a tuple with the position [x, y, z] of the EndA and EndB
+        * returns: [xA, yA, zA], [xB, yB, zB] 
+        """
+        clone = self.CreateClone() # copy object to 'dummy' object
+        clone.EndAConnection = 'Fixed' # ensures global coordinates
+        clone.EndBConnection = 'Fixed' # ensures global coordinates
+        EndA = [clone.EndAX, clone.EndAY, clone.EndAZ]
+        EndB = [clone.EndBX, clone.EndBY, clone.EndBZ]
+        model = orc.Model(handle=self.modelHandle)        
+        model.DestroyObject(clone) # free memory (delete the 'dummy' object)
+        return EndA, EndB
+
+
 class FatigueAnalysis(orc.FatigueAnalysis):
     CriticalDamageFactor: float
     """Analysis Data -> Critical damage"""
