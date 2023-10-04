@@ -19,11 +19,14 @@ __status__ = "Development"
 from typing import Union
 import ctypes
 import OrcFxAPI as orc
+from OrcFxAPI import *
 
+import NsgOrcFx.classes as _classes
 from NsgOrcFx.classes import *
 from NsgOrcFx.sortlines import *
 from NsgOrcFx.objauxfuncs import *
 import NsgOrcFx.environment as envtools
+from NsgOrcFx.modal import *
 
 
 # ======= CONSTANTS ======== #
@@ -132,6 +135,33 @@ class Model(orc.Model):
     def deleteObjs(self, objects: list[str | OrcaFlexObject]):
         for obj in objects:
             self.DestroyObject(obj)
+
+    def CalculateModal(
+            self, 
+            lineName: str | None = None,
+            firstMode: int = -1,
+            lastMode: int = -1            
+            ) -> Modes:
+        """
+        Performs modal analysis and returns the result (Modes object)
+        If no lineName is especified, includes all lines the analysis
+        """
+
+        # check if static calculation was performed
+        if self.state == orc.ModelState.Reset: 
+            self.CalculateStatics()
+
+        if lineName == None: includeCouped = True
+        else: includeCouped = False
+        
+        specs = orc.ModalAnalysisSpecification(True, firstMode, lastMode, includeCouped) # TODO: check other default inputs
+        
+        if lineName != None: obj = self[lineName]
+        else: obj = self
+
+        modes = _classes.Modes(obj, specs)
+
+        return modes
 
 
 

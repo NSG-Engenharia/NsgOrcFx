@@ -16,7 +16,7 @@ def getLinesToList(
     if lineList == None: 
         lineList: list[OrcaFlexLineObject] = []
 
-    if groupName:
+    if groupName != None:
         grouObj = model[groupName]
         selectedList = list(grouObj.GroupChildren(recurse=includeSubgroups))
     else:
