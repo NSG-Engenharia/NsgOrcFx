@@ -27,6 +27,7 @@ from .sortlines import *
 from .objauxfuncs import *
 # import environment as envtools
 from .modal import *
+from .loadcases import *
 
 
 # ======= CONSTANTS ======== #
@@ -118,7 +119,6 @@ class Model(orc.Model):
         for obj in newList: returnList.append(obj)
         return returnList
     
-
     def getUnconnectedConstraints(self) -> list[OrcaFlexObject]:
         """
         Returns the list of constraints to which there is not a line connected
@@ -149,6 +149,63 @@ class Model(orc.Model):
         for obj in objects:
             self.DestroyObject(obj)
 
+    def SetReducedSimulationDuration(self, 
+            reducedDuration: float, 
+            refstormduration = 10800.,
+            fallOrRise: str ='rise', # 'rise' or 'fall'
+            waveTrainIndex: int = 0,
+            extremeWavePosition: list[float] = [0.,0.]
+            ) -> None:
+        '''
+        Reduces the simulation time for irreguar wave based on the highest fall/rise
+            - reducedDuration: The simulation time after reducing. Used for the Stage 1. 
+            - refstormduration: wave duration along which the highest rise/fall will be searched
+            - fallOrRise: if time selection is based on the largest 'fall' or 'rise' event
+            - waveTrainIndex: based on which wave train largest fall or rise must be selected
+            - extremeWavePosition: position to search the largest 'fall' or 'rise'
+
+            Obs.: the Tp value defined in the model will be used for the Stage 0.
+        ''' 
+        SetReducedSimDuration(self, reducedDuration, refstormduration, fallOrRise, waveTrainIndex, extremeWavePosition)
+
+    def GenerateLoadCases(
+            self,
+            waveType: str, 
+            waveDirList: list[float],
+            waveHeightList: list[float],
+            wavePeriodList: list[float],
+            outFolder: str,
+            nTimesPeriodStage1: float = 5,
+            stormDuration: float = 10800,
+            calcGamma: bool = True,
+            reducedIrregDuration: float = None,
+            largestFallOrRise: str = 'rise',
+            waveTrainIndex: int = 0,
+            extremeWavePosition: list[float] = [0.,0.]
+            ) -> None:
+        """
+        Generates load cases from the current model for the list of wave direction, 
+        height and period provided and saves the files at the specified folder
+        
+        * waveType: 'regular' (e.g., Dean stream) or 'JONSWAP'
+        * waveDirList: list of wave direction
+        * waveHeightList: list of wave height (Hs for irregular wave)
+        * wavePeriodList: list of wave period (Tp for erregular wave)
+        * outFolder: folder to save the generated LC files
+        * nTimesPeriodStage1: simulation duration as number of periods (regular wave)
+        * stormDuration: simulation total duration (irregular wave)
+        * calcGamma: if the gamma should be calculated base on formula gamma = 6.4 x Tp ^ -0.491
+        * reducedIrregDuration: if not `None`, the simulation duration, reduced based on the largest 'fall' of 'rise' during the `simDuration`
+        * largestFallOrRise: if `reducedIrregDuration != None`, if the extreme event is searched based on the largest 'fall' or 'rise'
+        * waveTrainIndex: which Wave Train should be considered
+        * extremeWavePosition: if `reducedIrregDuration != None`, position to search for the largest 'rise' or 'fall'
+        """
+        GenLoadCases(
+            self, waveType, waveDirList, waveHeightList, wavePeriodList, outFolder,
+            nTimesPeriodStage1, stormDuration, calcGamma, reducedIrregDuration,
+            largestFallOrRise, waveTrainIndex, extremeWavePosition)
+
+
     def CalculateModal(
             self, 
             lineName: str | None = None,
@@ -172,7 +229,7 @@ class Model(orc.Model):
         if lineName != None: obj = self[lineName]
         else: obj = self
 
-        modes = _classes.Modes(obj, specs)
+        modes = Modes(obj, specs)
 
         return modes
 

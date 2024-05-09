@@ -1,4 +1,5 @@
-import NsgOrcFx
+# import NsgOrcFx
+import src.NsgOrcFx as NsgOrcFx
 # import NsgOrcFx_nsgeng as NsgOrcFx
 # import src.NsgOrcFx_nsgeng as NsgOrcFx
 
@@ -7,8 +8,6 @@ model = NsgOrcFx.Model()
 # lines = model.getAllLines()
 # line = lines[0]
 line = model.CreateLine()
-
-line.params.EndAGamma
 
 print(line.params.EndAConnection)
 line.params.EndAConnection = 'Anchored'
@@ -20,3 +19,4 @@ print(line.params.EndAConnection)
 # for line in lines:
 #     print(line.params.Name)
 
+model.SetReducedSimulationDuration(200)

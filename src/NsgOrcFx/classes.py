@@ -59,8 +59,6 @@ class OrcaFlexLineObject(OrcaFlexObject, __ofx.OrcaFlexLineObject):
             else:
                 raise Exception('Error! nSegs or targetLengh must be provided.')
 
-
-
     def getEndPositions(self) -> tuple[list[float], list[float]]:
         """
         Returns a tuple with the position [x, y, z] of the EndA and EndB
@@ -74,7 +72,6 @@ class OrcaFlexLineObject(OrcaFlexObject, __ofx.OrcaFlexLineObject):
         model = __ofx.Model(handle=self.modelHandle)        
         model.DestroyObject(clone) # free memory (delete the 'dummy' object)
         return EndA, EndB
-
 
 class FatigueAnalysis(__ofx.FatigueAnalysis):
     params: params._DataFatigueAnalysisObject

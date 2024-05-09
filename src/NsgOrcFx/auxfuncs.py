@@ -2,6 +2,7 @@ import os
 import ctypes
 import numpy as np
 import OrcFxAPI as __ofx
+from . import constants
 
 __char = ctypes.c_wchar
 __letters = 'abcdefghijklimnoprstuvwxyz'
@@ -124,3 +125,114 @@ def getIntermadiatePos(
     p1, p2 = np.array(endA), np.array(endB)
     pos = (p2-p1)*positionRatio + p1
     return pos.tolist().copy()
+
+
+# Searchs for the highest rise or fall for a given seastate (defined in the input OrcaFlex model)
+# Save this file in the same folder of you code and include the following line in the library section: 
+# 'from Orc_SearchWave import GetLargestRiseAndFall, SetReducedSimDuration'
+def __TxtToFloat(txt: str):
+    '''
+    convert string to float, replacing ',' by '.', if necessary
+    '''
+    txt = txt.replace(',', '.')
+    return float(txt)
+
+def isRegularWave(waveType: str) -> bool:
+    if waveType in constants.regularWaveTypes: return True
+    elif waveType in constants.irregularWaveTypes: return False
+    else:
+        print(f'Warning! Wave type {waveType} not recognized. Considered as irregular.')
+        return False
+
+def SetReducedSimDuration(
+        model: __ofx.Model, 
+        reducedDuration: float = 200., 
+        refstormduration = 10800.,
+        fallOrRise: str ='rise', # 'rise' or 'fall'
+        waveTrainIndex: int = 0,
+        extremeWavePosition: list[float] = [0.,0.]
+        ) -> None:
+    '''
+    Reduces the simulation time for irreguar wave based on the highest fall/rise
+        - model: OrcaFlex loaded model
+        - reducedDuration: The simulation time after reducing. Used for the Stage 1. 
+        - refstormduration: wave duration along which the highest rise/fall will be searched
+        - fallOrRise: if time selection is based on the largest 'fall' or 'rise' event
+        - waveTrainIndex: based on which wave train largest fall or rise must be selected
+        - extremeWavePosition: position of wave origin for search
+
+        Obs.: the Tp value defined in the model will be used for the Stage 0.
+    '''        
+    env = model.environment
+    previousWaveTrainIndex = env.SelectedWaveTrainIndex
+    env.SelectedWaveTrainIndex = waveTrainIndex
+
+    if isRegularWave(env.WaveType):
+        raise Exception(f'Reduced simulation time approach is only \
+                        valid for irregular waves. Wave type{env.WaveType} not supported.')
+    
+    # env.WaveTimeOrigin = 0 # uses the value defined by user
+    # prevWavePreviewPosition = [env.WavePreviewPositionX, env.WavePreviewPositionY]
+    env.WavePreviewPositionX = extremeWavePosition[0]
+    env.WavePreviewPositionY = extremeWavePosition[1]
+    
+    tRise, tFall = GetLargestRiseAndFall(model, WaveSearchDuration=refstormduration)
+    if fallOrRise == 'rise': tSel = tRise
+    elif fallOrRise == 'fall': tSel = tFall
+    else: raise Exception(f'Input {fallOrRise} not allowed to "fallOrRise".')
+
+    env.WaveTimeOrigin = -tSel + reducedDuration/2
+    
+    general = model.general
+    Tz = env.WaveTz
+    general.StageDuration[0] = Tz
+    general.StageDuration[1] = reducedDuration
+
+    env.SelectedWaveTrainIndex = previousWaveTrainIndex
+    # env.WavePreviewPositionX, env.WavePreviewPositionY = prevWavePreviewPosition[0], prevWavePreviewPosition[1]
+
+
+def GetLargestRiseAndFall(
+        model: __ofx.Model, 
+        filename: str = 'SearchWave', 
+        WaveSearchDuration: float = 10800
+        ) -> tuple[float,float]:
+    '''
+    Inputs:
+        - model: OrcaFlex model with the defined wave (type, Tp, Hs ...)
+        - filename (optional): Temporary file that will be used in the search.
+        - WaveSearchDuration (optional): Period, in seconds, to find the highest rise or fall. Default = 10080
+        
+    Outputs:
+        - tuple (t1, t2) with two values: time of highest rise and fall
+    '''        
+    env = model.environment
+
+    #assuming we want to look over the first 3hrs
+    env.WaveSearchFrom = 0.0
+    env.WaveSearchDuration = WaveSearchDuration
+    #i'm using Largest Rise as the metric to judge which wave I want
+    #so I don't actually need to report any of the individual waves 
+    #so I set the search parameters to arbitrarily high values:
+    env.WaveSearchMinHeight = 1e9
+    env.WaveSearchMinSteepness = 1e9
+
+    file = filename + '.txt'
+    try:   
+        model.SaveWaveSearchSpreadsheet(file)
+    except:
+        raise Exception(f'Error when saving temporary file {file}.')
+
+    #parse the txt file to find the line with the largest rise and fall
+    with open(file) as f:
+        for row in f:
+            if 'Largest rise' in row:
+                timeOfLargestRise = __TxtToFloat(row.split()[3]) #get the global time of the largest rise
+            elif 'Largest fall' in row:
+                timeOfLargestFall = __TxtToFloat(row.split()[3]) #get the global time of the largest fall
+    
+    os.remove(file) # delete temp file
+
+    t0 = env.WaveTimeOrigin
+
+    return timeOfLargestRise-t0, timeOfLargestFall-t0
