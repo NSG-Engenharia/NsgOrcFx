@@ -17,16 +17,16 @@ __status__ = "Development"
 
 
 from typing import Union
-import ctypes
-import OrcFxAPI as orc
+# import ctypes
+# import OrcFxAPI as __ofx
 from OrcFxAPI import *
 
-import NsgOrcFx.classes as _classes
-from NsgOrcFx.classes import *
-from NsgOrcFx.sortlines import *
-from NsgOrcFx.objauxfuncs import *
-import NsgOrcFx.environment as envtools
-from NsgOrcFx.modal import *
+# import classes as _classes
+from .classes import *
+from .sortlines import *
+from .objauxfuncs import *
+# import environment as envtools
+from .modal import *
 
 
 # ======= CONSTANTS ======== #

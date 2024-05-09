@@ -1,7 +1,7 @@
 import math
 # import numpy as np
-from NsgOrcFx.classes import *
-from NsgOrcFx.auxfuncs import *
+from .classes import *
+from .auxfuncs import *
 
 
 def getSubmergedVolume(line: OrcaFlexLineObject, inner: bool = True, segIndex: int=None) -> float:

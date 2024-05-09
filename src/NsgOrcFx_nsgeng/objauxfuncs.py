@@ -1,10 +1,10 @@
-from typing import Union
-import OrcFxAPI as orc
-from NsgOrcFx.classes import *
+# from typing import Union
+import OrcFxAPI as __ofx
+from .classes import *
 
 
 def getLinesToList(
-        model: orc.Model, 
+        model: __ofx.Model, 
         groupName: Union[str, None] = None, 
         includeSubgroups: bool = False,
         lineList: list[OrcaFlexLineObject] = None
@@ -23,7 +23,7 @@ def getLinesToList(
         selectedList = list(model.objects)
 
     for obj in selectedList:
-        if obj.type == orc.ObjectType.Line:
+        if obj.type == __ofx.ObjectType.Line:
             lineList.append(OrcaFlexLineObject(obj))
     
     return lineList

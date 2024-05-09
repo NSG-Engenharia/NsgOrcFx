@@ -1,0 +1,33 @@
+Metadata-Version: 2.1
+Name: NsgOrcFx_nsgeng
+Version: 1.0.2
+Summary: Package with additional tools to the OrcFxAPI package
+Author-email: NSG Engenharia <comercial@nsgeng.com>
+Project-URL: Homepage, https://github.com/NSG-Engenharia/NsgOrcFx
+Project-URL: Issues, https://github.com/NSG-Engenharia/NsgOrcFx/issues
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: Microsoft :: Windows
+Requires-Python: >=3.8
+Description-Content-Type: text/markdown
+License-File: LICENSE
+
+# NsgOrcFx
+Library of tools for the OrcaFlex API
+
+# Testing
+* Upload:
+```
+py -m build
+py -m twine upload --repository testpypi dist/*
+```
+
+* Install the package (test):
+```
+py -m pip install --index-url https://test.pypi.org/simple --no-deps NsgOrcFx_nsgeng
+```
+If already installed:
+```
+py -m pip uninstall NsgOrcFx_nsgeng
+py -m pip install --upgrade --index-url https://test.pypi.org/simple --no-deps NsgOrcFx_nsgeng
+```

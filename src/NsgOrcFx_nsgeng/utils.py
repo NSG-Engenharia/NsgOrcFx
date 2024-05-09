@@ -1,5 +1,5 @@
-import OrcFxAPI as __orc
-import NsgOrcFx.constants as __constants
+import OrcFxAPI as __ofx
+from . import constants as __constants
 import numpy as np
 from scipy import interpolate
 
@@ -37,14 +37,14 @@ def mergeLists(lists: list[list[float]]) -> list[list[float]]:
     
     
 
-def RadialPosFromStr(rPos: str) -> __orc.RadialPos:
+def RadialPosFromStr(rPos: str) -> __ofx.RadialPos:
     """
     Return the RadialPos class correspondent to the string identifier
     * rPos: 'inner', 'mid', 'outer'
     """
-    if rPos == 'inner': rp = __orc.RadialPos.Inner
-    elif rPos == 'mid': rp = __orc.RadialPos.Mid
-    elif rPos == 'outer': rp = __orc.RadialPos.Outer
+    if rPos == 'inner': rp = __ofx.RadialPos.Inner
+    elif rPos == 'mid': rp = __ofx.RadialPos.Mid
+    elif rPos == 'outer': rp = __ofx.RadialPos.Outer
     else:
         raise Exception(f'Radial position {rPos} not allowed.')
     

@@ -2,16 +2,16 @@ from __future__ import annotations
 from typing import Optional, Union
 import pandas as pd
 import numpy as np
-import math
-import OrcFxAPI as orc
-import NsgOrcFx.utils as _utils
-import NsgOrcFx.modal as _modal
-import NsgOrcFx.sncurves as SNCurves
+# import math
+import OrcFxAPI as __ofx
+from . import utils as _utils
+from . import modal as _modal
+from . import sncurves as SNCurves
 
-class OrcaFlexObject(orc.OrcaFlexObject):
+class OrcaFlexObject(__ofx.OrcaFlexObject):
     Name: str
     """Object name"""
-    def __init__(self, object: orc.OrcaFlexObject) -> None:
+    def __init__(self, object: __ofx.OrcaFlexObject) -> None:
         super().__init__(object.modelHandle, object.handle, object.type)
 
 class OrcaFlexGeneralObject(OrcaFlexObject):
@@ -29,7 +29,7 @@ class OrcaFlexGeneralObject(OrcaFlexObject):
 class OrcaFlexConstraint(OrcaFlexObject):
     pass
 
-class OrcaFlexLineObject(OrcaFlexObject, orc.OrcaFlexLineObject):
+class OrcaFlexLineObject(OrcaFlexObject, __ofx.OrcaFlexLineObject):
     EndAConnection: str 
     """End connections -> End A -> Connect to object"""
     EndBConnection: str    
@@ -101,7 +101,7 @@ class OrcaFlexLineObject(OrcaFlexObject, orc.OrcaFlexLineObject):
     def CreateClone(
             self, 
             name: Optional[str] = None, 
-            model: Optional[orc.Model] = None
+            model: Optional[__ofx.Model] = None
             ) -> OrcaFlexLineObject:
         newObj = super().CreateClone(name, model)
         newLineObj = OrcaFlexLineObject(newObj)
@@ -120,7 +120,7 @@ class OrcaFlexLineObject(OrcaFlexObject, orc.OrcaFlexLineObject):
         """Set the length/number of segments for all sections"""
         for i in range(self.NumberOfSections):
             if nSegs != None:
-                self.TargetSegmentLength[i] = orc.OrcinaDefaultReal()
+                self.TargetSegmentLength[i] = __ofx.OrcinaDefaultReal()
                 self.NumberOfSegments[i] = nSegs
             elif targetLength != None:
                 self.TargetSegmentLength[i] = targetLength
@@ -139,12 +139,12 @@ class OrcaFlexLineObject(OrcaFlexObject, orc.OrcaFlexLineObject):
         clone.EndBConnection = 'Fixed' # ensures global coordinates
         EndA = [clone.EndAX, clone.EndAY, clone.EndAZ]
         EndB = [clone.EndBX, clone.EndBY, clone.EndBZ]
-        model = orc.Model(handle=self.modelHandle)        
+        model = __ofx.Model(handle=self.modelHandle)        
         model.DestroyObject(clone) # free memory (delete the 'dummy' object)
         return EndA, EndB
 
 
-class FatigueAnalysis(orc.FatigueAnalysis):
+class FatigueAnalysis(__ofx.FatigueAnalysis):
     CriticalDamageFactor: float
     """Analysis Data -> Critical damage"""
     ThetaCount: int
@@ -292,8 +292,8 @@ class FatigueAnalysis(orc.FatigueAnalysis):
 
 
 # Modal analysis
-class Modes(orc.Modes):
-    model: orc.Model
+class Modes(__ofx.Modes):
+    model: __ofx.Model
 
     # def __checkSingleLine(self):
     #     if self.isWholeSystem:
@@ -312,14 +312,14 @@ class Modes(orc.Modes):
         return self.owner[0]
         
     @property
-    def model(self) -> orc.Model:
+    def model(self) -> __ofx.Model:
         """Returns the OrcaFlex Model"""
-        # return orc.Model(handle=self.line.modelHandle)
-        return orc.Model(handle=self.owner[0].modelHandle)
+        # return __ofx.Model(handle=self.line.modelHandle)
+        return __ofx.Model(handle=self.owner[0].modelHandle)
 
     def getLineByName(self, lineName: str) -> OrcaFlexLineObject:
         for obj in self.owner:
-            if obj.name == lineName and obj.type == orc.ObjectType.Line:
+            if obj.name == lineName and obj.type == __ofx.ObjectType.Line:
                 return obj
         raise Exception(f'Line {lineName} not found in modal analysis.')
 

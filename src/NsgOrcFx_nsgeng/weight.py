@@ -5,22 +5,22 @@ Generates a report with the total weight of the structures in the model
 from dataclasses import dataclass
 import math
 from typing import TextIO
-import OrcFxAPI as orc
+import OrcFxAPI as __ofx
 from types import FunctionType
-from NsgOrcFx.classes import *
-from NsgOrcFx.weightaux import *
-from NsgOrcFx.objauxfuncs import *
+from .classes import *
+from .weightaux import *
+from .objauxfuncs import *
 
-def __getLineObjList(model: orc.Model) -> list[OrcaFlexObject]:
+def __getLineObjList(model: __ofx.Model) -> list[OrcaFlexObject]:
     # lineList: list[OrcaFlexObject] = []
     # for obj in model.objects:
-    #     if obj.type == orc.ObjectType.Line:
+    #     if obj.type == __ofx.ObjectType.Line:
     #         lineList.append(obj)
     # return lineList
     return getLinesToList(model)
 
-def __getModelFromObj(obj: OrcaFlexObject) -> orc.Model:
-    return orc.Model(handle=obj.modelHandle)
+def __getModelFromObj(obj: OrcaFlexObject) -> __ofx.Model:
+    return __ofx.Model(handle=obj.modelHandle)
 
 @dataclass
 class WeightReport:
@@ -54,7 +54,7 @@ def __calcCoatingLinearMass(
 def __getLineWeight(line: OrcaFlexLineObject, weight: WeightReport) -> None:
     """Get the line weight"""
     for ltName, length in zip(line.LineType, line.Length):
-        model = orc.Model(handle=line.modelHandle)
+        model = __ofx.Model(handle=line.modelHandle)
         lt = model[ltName]
         totalLinDensity = lt.MassPerUnitLength # (ton/m)
         coatingLinDensity = __calcCoatingLinearMass(lt)
@@ -111,7 +111,7 @@ def __getAddedMass(lines: list[OrcaFlexLineObject], weight: WeightReport) -> Non
             else: # "General"
                 # tCoating = 0.0
                 CaG = lt.Cax
-                if lt.Cay != orc.OrcinaDefaultReal():
+                if lt.Cay != __ofx.OrcinaDefaultReal():
                     CaG = max(CaG, lt.Cay)
                 CaHP = 0.0
 
@@ -146,7 +146,7 @@ def __printWeightReport(weight: WeightReport, outFile: str=None) -> None:
 
 
 def genWeightReport(
-        model: orc.Model, 
+        model: __ofx.Model, 
         lineList: list[OrcaFlexLineObject] = None,
         outFile: str=None, 
         msgFunc: FunctionType=None

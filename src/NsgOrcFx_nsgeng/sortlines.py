@@ -1,5 +1,5 @@
-from NsgOrcFx.classes import *
-from NsgOrcFx.auxfuncs import *
+from .classes import *
+from .auxfuncs import *
 
 
 # def __haveAcommonConnection(

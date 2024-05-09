@@ -2,9 +2,9 @@ import math
 import numpy as np
 import OrcFxAPI as orc
 # from NsgOrcFx.classes import *
-import NsgOrcFx.constants as __constants
-import NsgOrcFx.classes as __classes
-import NsgOrcFx.utils as __utils
+from . import constants as __constants
+from . import classes as __classes
+from . import utils as __utils
 
 # def calculateModalAnalysis(
 #         firstMode: int = -1,

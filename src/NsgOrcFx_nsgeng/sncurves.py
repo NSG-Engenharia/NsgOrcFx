@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-import OrcFxAPI
+import OrcFxAPI as _ofx
 
 
 # ==== SNCurve CLASS ==== #
@@ -20,7 +20,7 @@ class SNCurve:
 
     def setToAnalysis(
             self,
-            analysis: OrcFxAPI.FatigueAnalysis,
+            analysis: _ofx.FatigueAnalysis,
             tableLineNumber: int = 1
             ) -> None:
         """

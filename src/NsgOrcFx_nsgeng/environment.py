@@ -2,8 +2,8 @@
 Library for environmental loads (DNV-RP-C205)
 """
 
-import NsgOrcFx.constants as constants
 import math
+from . import constants
 
 pi = constants.pi
 g = constants.gravity

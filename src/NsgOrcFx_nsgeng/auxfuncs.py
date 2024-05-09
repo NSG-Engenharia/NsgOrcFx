@@ -1,7 +1,7 @@
 import os
 import ctypes
 import numpy as np
-import OrcFxAPI as orc
+import OrcFxAPI as __ofx
 
 __char = ctypes.c_wchar
 __letters = 'abcdefghijklimnoprstuvwxyz'
@@ -12,7 +12,7 @@ def getOrcaVersion() -> str:
     _charArray16 = (__char * 16)()
     OK = ctypes.c_long()
     Status = ctypes.c_long()
-    orc._GetDLLVersion(None, 
+    __ofx._GetDLLVersion(None, 
                         _charArray16,
                         ctypes.byref(OK), 
                         ctypes.byref(Status))
@@ -100,7 +100,7 @@ def afCheckOrCreateFolder(path: str) -> bool:
             return True
 
 def getGlobalCoordinates(
-        line: orc.OrcaFlexLineObject
+        line: __ofx.OrcaFlexLineObject
         ) -> tuple[list[float], list[float]]:
     """
     Returns the global coordinates of a line end
