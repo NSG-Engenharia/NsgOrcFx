@@ -1,6 +1,6 @@
 [project]
-name = "NsgOrcFx_nsgeng"
-version = "1.0.3"
+name = "NsgOrcFx"
+version = "1.0.6"
 authors = [
   { name="NSG Engenharia", email="comercial@nsgeng.com" },
 ]

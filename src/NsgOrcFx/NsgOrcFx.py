@@ -65,12 +65,21 @@ class Model(orc.Model):
         obj = self[name]
         return OrcaFlexLineObject(obj)
     
-    def getAllLines(self) -> LineSelection:
+    def getAllLines(self, includeStiffeners: bool = True) -> LineSelection:
         """Returns a list of all line objects"""
         lineList = LineSelection(self)
         for obj in self.objects:
             if obj.type == orc.ObjectType.Line:
                 lineList.append(OrcaFlexLineObject(obj))
+                
+        if not includeStiffeners: # remove the stiffeners (line internally created by OrcaFlex due to attachements)
+            stiffenerNames = []
+            for line in lineList: stiffenerNames.extend(line.AttachmentName)                
+            newList = []
+            for line in lineList:
+                if not line.name in stiffenerNames: newList.append(line)
+            lineList = newList
+            
         return lineList
 
     def getLineList(
@@ -132,6 +141,10 @@ class Model(orc.Model):
 
         return resultList
     
+    def CreateLine(self, name: Optional[str] = None) -> OrcaFlexLineObject:
+        newObj = self.CreateObject(ObjectType.Line, name)
+        return OrcaFlexLineObject(newObj)    
+
     def deleteObjs(self, objects: list[str | OrcaFlexObject]):
         for obj in objects:
             self.DestroyObject(obj)

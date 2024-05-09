@@ -7,94 +7,25 @@ import OrcFxAPI as __ofx
 from . import utils as _utils
 from . import modal as _modal
 from . import sncurves as SNCurves
+from . import params
 
 class OrcaFlexObject(__ofx.OrcaFlexObject):
-    Name: str
-    """Object name"""
-    def __init__(self, object: __ofx.OrcaFlexObject) -> None:
-        super().__init__(object.modelHandle, object.handle, object.type)
+    def __init__(self, obj: __ofx.OrcaFlexObject) -> None:
+        super().__init__(obj.modelHandle, obj.handle, obj.type)
+        object.__setattr__(self, 'params', params._DataLineObject(self))
+
 
 class OrcaFlexGeneralObject(OrcaFlexObject):
-    StageCount: int
-    """Analysis -> Stages -> Number of stages"""
-    StageDuration: list[float]
-    """Analysis -> Stages -> Duration (s)"""
-    ImplicitConstantTimeStep: float
-    """Dynamics -> Parameters -> Time step (s)"""
-    ImplicitConstantMaxNumOfIterations: int
-    """Dynamics -> Parameters -> Maximum number of iterations"""
-    ImplicitTolerance: float
-    """Dynamics -> Parameters -> Tolerance"""
+    params: params._GeneralObject
 
 class OrcaFlexConstraint(OrcaFlexObject):
     pass
 
 class OrcaFlexLineObject(OrcaFlexObject, __ofx.OrcaFlexLineObject):
-    EndAConnection: str 
-    """End connections -> End A -> Connect to object"""
-    EndBConnection: str    
-    """End connections -> End B -> Connect to object"""
-    EndAX: float
-    """End connections -> End A -> Position (m) -> x"""
-    EndBX: float
-    """End connections -> End B -> Position (m) -> x"""
-    EndAY: float
-    """End connections -> End A -> Position (m) -> y"""
-    EndBY: float
-    """End connections -> End B -> Position (m) -> y"""
-    EndAZ: float
-    """End connections -> End A -> Position (m) -> z"""
-    EndBZ: float
-    """End connections -> End B -> Position (m) -> z"""
-    EndAConnectionzRelativeTo: str
-    """End connections -> End A -> z relative to: 'End A' or 'End B'"""
-    EndBConnectionzRelativeTo: str
-    """End connections -> End B -> z relative to: 'End A' or 'End B'"""
-    EndAHeightAboveSeabed: float
-    """End connections -> End A -> Height above seabed"""
-    EndBHeightAboveSeabed: float
-    """End connections -> End B -> Height above seabed"""
-    EndAAzimuth: float
-    """End connections -> End A -> Orientation (deg) -> Azimuth"""
-    EndBAzimuth: float
-    """End connections -> End B -> Orientation (deg) -> Azimuth"""
-    EndADeclination: float
-    """End connections -> End A -> Orientation (deg) -> Declination"""
-    EndBDeclination: float
-    """End connections -> End B -> Orientation (deg) -> Declination"""
-    EndAGamma: float
-    """End connections -> End A -> Orientation (deg) -> Gamma"""
-    EndBGamma: float
-    """End connections -> End B -> Orientation (deg) -> Gamma"""
-    EndAReleaseStage: int
-    """End connections -> End A -> Release at start of stage"""
-    EndBReleaseStage: int
-    """End connections -> End B -> Release at start of stage"""    
-    NumberOfSections: int
-    """Structure -> Sections -> Number of sections"""
-    LineType: list[str]
-    """Structure -> Line type"""
-    Weighting: list[float]
-    """Structure -> Weighting (when LengthAndEndOrientations = 'Calculated from end positions')"""
-    Length: list[float]
-    """Structure -> Length"""
-    ExpansionFactor: list[float]
-    """Structure -> Expansion Factor"""
-    TargetSegmentLength: list[float]
-    """Structure -> Target segment length"""
-    NumberOfSegments: list[int]
-    """Structure -> Number of segments"""
-    ClashCheck: list[str]
-    """Structure -> Clash check"""
-    CumulativeLength: list[float]
-    """Structure -> Cumulative values -> Length (m)"""
-    CumulativeNumberOfSegments: list[float]
-    """Structure -> Cumulative values -> Number of segments"""
-    LogResults: str
-    """Results -> Log results = 'Yes' (default) or 'No'"""
-
+    params: params._DataLineObject
 
     def totalLength(self) -> float:
+        self.__init__()
         """Total length of the line"""
         return self.CumulativeLength[-1]
 
@@ -103,6 +34,7 @@ class OrcaFlexLineObject(OrcaFlexObject, __ofx.OrcaFlexLineObject):
             name: Optional[str] = None, 
             model: Optional[__ofx.Model] = None
             ) -> OrcaFlexLineObject:
+        """Create an identical line, except for the name"""
         newObj = super().CreateClone(name, model)
         newLineObj = OrcaFlexLineObject(newObj)
         return newLineObj
@@ -145,60 +77,7 @@ class OrcaFlexLineObject(OrcaFlexObject, __ofx.OrcaFlexLineObject):
 
 
 class FatigueAnalysis(__ofx.FatigueAnalysis):
-    CriticalDamageFactor: float
-    """Analysis Data -> Critical damage"""
-    ThetaCount: int
-    """Analysis Data -> Number of thetas"""
-    ArclengthIntervalsCount: int
-    """Analysis Data -> No. of arc length intervals"""
-    AnalysisType: str
-    """Analysis Type = 'Regular', 'Rainflow', 'Spectral (frequency domain)', or 'Spectral (response RAOs)'"""
-    LoadCaseCount: int 
-    """Load cases -> Number of load cases"""
-    LoadCaseFileName: list[str]
-    """Load cases -> Load case file name"""
-    LoadCaseLineName: list[str]
-    """Load cases -> Line name"""
-    PeriodFrom: list[float]
-    """Load cases -> Simulation periods (s) -> From"""
-    PeriodTo: list[float]
-    """Load cases -> Simulation periods (s) -> To"""
-    LoadCaseExposureTime: list[float]
-    """Load cases -> Exposure time (hours)"""
-
-    FromArclength: list[float]
-    """Analysis data -> Arc length intervals (m) -> From"""
-    ToArclength: list[float]
-    """Analysis data -> Arc length intervals (m) -> To"""
-    RadialPosition: list[str]
-    """Analysis data -> Radial position: 'Inner', 'Outer', or 'Mid'"""
-    SCF: list[float]
-    """Analysis data -> Stress correction factors -> Stress concentration factor (SCF)"""
-    ThicknessCorrectionFactor: list[float]
-    """Analysis data -> Stress correction factors -> Thickness factor"""
-    AnalysisDataSNcurve: list[str]
-    """Analysis data -> Stress correction factors -> S-N curve"""
-
-    SNcurveCount: int
-    """S-N curves -> S-N curves -> Count"""
-    SNcurveName: list[str]
-    """S-N curves -> S-N curves -> Names"""
-    SNcurveSpecificationMethod: str
-    """S-N curves -> Data for S-N curve -> Specified by ('Parameters' or 'Table')"""
-    SNcurvem1: float
-    """S-N curves -> Data for S-N curve -> S-N curve parameters -> Low cycle region < N cycles -> m1"""
-    SNcurveloga1: float
-    """S-N curves -> Data for S-N curve -> S-N curve parameters -> Low cycle region < N cycles -> log(a1)"""
-    SNcurveRegionBoundary: float
-    """S-N curves -> Data for S-N curve -> S-N curve parameters -> Region boundary, N (cycles)"""   
-    SNcurvem2: float
-    """S-N curves -> Data for S-N curve -> S-N curve parameters -> Low cycle region < N cycles -> m2"""
-    SNcurveloga2: float
-    """S-N curves -> Data for S-N curve -> S-N curve parameters -> Low cycle region < N cycles -> log(a2)"""
-    SNcurveEnduranceLimit: float
-    """S-N curves -> Data for S-N curve -> S-N curve parameters -> Endurance limit"""
-    SNcurveMeanStressModel: str 
-    """S-N curves -> Data for S-N curve -> Mean stress model: 'None'; 'Goodman'; 'Soderberg'; 'Gerber'; 'Smith-Watson-Topper'"""
+    params: params._DataFatigueAnalysisObject
 
     def __selectSNCurveByName(self, name: str, environment: str) -> SNCurves.SNCurve:
         """Name (e.g, 'F1') and environment ('air' or 'seawater')"""

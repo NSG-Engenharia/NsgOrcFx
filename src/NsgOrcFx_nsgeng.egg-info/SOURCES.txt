@@ -9,6 +9,7 @@ src/NsgOrcFx_nsgeng/constants.py
 src/NsgOrcFx_nsgeng/environment.py
 src/NsgOrcFx_nsgeng/modal.py
 src/NsgOrcFx_nsgeng/objauxfuncs.py
+src/NsgOrcFx_nsgeng/params.py
 src/NsgOrcFx_nsgeng/sncurves.py
 src/NsgOrcFx_nsgeng/sortlines.py
 src/NsgOrcFx_nsgeng/utils.py
