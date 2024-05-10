@@ -21,16 +21,16 @@ class SNCurve:
     def setToAnalysis(
             self,
             analysis: _ofx.FatigueAnalysis,
-            tableLineNumber: int = 1
+            snCurveIndex: int = 0
             ) -> None:
         """
         Set the current curve to the Fatigue Analysis (S-N curves page)
         * analysis: FatigueAnalysis object
         * tableLineNumber: line of the table of S-N curves page where the curve will be defined
         """
-        if analysis.SNcurveCount < tableLineNumber: analysis.SNcurveCount = tableLineNumber
-        analysis.SelectedSNcurveIndex = tableLineNumber-1
-        analysis.SNcurveName[tableLineNumber-1] = self.name + ' ' + self.environment
+        if analysis.SNcurveCount < snCurveIndex+1: analysis.SNcurveCount = snCurveIndex+1
+        analysis.SelectedSNcurveIndex = snCurveIndex
+        analysis.SNcurveName[snCurveIndex] = self.name + ' ' + self.environment
         analysis.SNcurveSpecificationMethod = 'Parameters'
         analysis.SNcurvem1 = self.m1
         analysis.SNcurveloga1 = self.log_a1 + 3*self.m1 # pressure in kPa

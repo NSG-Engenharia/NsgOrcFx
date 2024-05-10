@@ -1,4 +1,4 @@
-# from typing import Union
+from typing import Union
 import OrcFxAPI as __ofx
 from .classes import *
 

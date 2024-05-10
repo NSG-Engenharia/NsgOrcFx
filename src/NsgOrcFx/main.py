@@ -17,17 +17,16 @@ __status__ = "Development"
 
 
 from typing import Union
-# import ctypes
-# import OrcFxAPI as __ofx
+from types import FunctionType
+
 from OrcFxAPI import *
 
-# import classes as _classes
 from .classes import *
 from .sortlines import *
 from .objauxfuncs import *
-# import environment as envtools
 from .modal import *
 from .loadcases import *
+from .utils import *
 
 
 # ======= CONSTANTS ======== #
@@ -49,7 +48,22 @@ class Model(orc.Model):
     general: OrcaFlexGeneralObject
     environment: OrcaFlexEnvironmentObject
     auxfuncs = auxfuncs
-   
+
+    def __wrapBasicObjets(self, name: str, obj: OrcaFlexObject) -> "OrcaFlexObject":
+        if name == 'general':
+            return OrcaFlexGeneralObject(obj)
+        elif name == 'environment':
+            return OrcaFlexEnvironmentObject(obj)
+        else:
+            return obj
+
+    def __getattribute__(self, name: str) -> "OrcaFlexObject":
+        obj = super().__getattribute__(name)
+        if name != '_Model__wrapBasicObjets':
+            return self.__wrapBasicObjets(name, obj)
+        else:            
+            return obj
+
     def __checkOrcaFlexVersion(self) -> bool:
         """Return True if the installed version of OrcaFlex is equal or newer than the required"""
         if not checkOrcaFlexVersion(requiredOrcFxVer):
@@ -62,6 +76,18 @@ class Model(orc.Model):
     def __getitem__(self, name: str) -> OrcaFlexObject:
         return OrcaFlexObject(super().__getitem__(name)) 
     
+    def Save(self, file: str) -> None:
+        """
+        Save data if file extension is '.dat' or '.yml' and simulation if '.sim'
+        """
+        extension = getFileExtension(file)
+        if extension == '.dat' or extension == '.yml':
+            self.SaveData(file)
+        elif extension == '.sim':
+            self.SaveSimulation(file)
+        else:
+            raise Exception(f'Extension "{extension}" not allowed.')
+
     def findLineByName(self, name: str) -> OrcaFlexLineObject:
         """Find a line object by its name"""
         obj = self[name]

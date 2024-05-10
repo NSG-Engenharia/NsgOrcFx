@@ -1,5 +1,5 @@
 """
-Example of generating load cases
+Example of generating load cases 
 """
 
 import NsgOrcFx

@@ -7,6 +7,8 @@ src/NsgOrcFx/auxfuncs.py
 src/NsgOrcFx/classes.py
 src/NsgOrcFx/constants.py
 src/NsgOrcFx/environment.py
+src/NsgOrcFx/fatigue.py
+src/NsgOrcFx/loadcases.py
 src/NsgOrcFx/modal.py
 src/NsgOrcFx/objauxfuncs.py
 src/NsgOrcFx/params.py
@@ -19,3 +21,7 @@ src/NsgOrcFx.egg-info/PKG-INFO
 src/NsgOrcFx.egg-info/SOURCES.txt
 src/NsgOrcFx.egg-info/dependency_links.txt
 src/NsgOrcFx.egg-info/top_level.txt
+tests/test1_data-auto-complete.py
+tests/test2_generate-loadcases.py
+tests/test3_modal-analysis.py
+tests/test4_fatigue.py

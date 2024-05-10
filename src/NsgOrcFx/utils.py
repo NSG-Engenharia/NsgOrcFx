@@ -1,3 +1,4 @@
+import os
 import OrcFxAPI as __ofx
 from . import constants as __constants
 import numpy as np
@@ -74,3 +75,7 @@ def creatEvenlySpacedData(
         yNewLists.append(yNew)
 
     return xNew, yNewLists
+
+def getFileExtension(file: str) -> str:
+    _, extension = os.path.splitext(file)
+    return extension

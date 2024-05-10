@@ -1,8 +1,8 @@
 [project]
 name = "NsgOrcFx"
-version = "1.0.6"
+version = "1.0.10"
 authors = [
-  { name="NSG Engenharia", email="comercial@nsgeng.com" },
+  { name="NSG Engenharia", email="software@nsgeng.com" },
 ]
 description = "Package with additional tools to the OrcFxAPI package"
 readme = "README.md"

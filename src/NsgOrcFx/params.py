@@ -369,6 +369,7 @@ class _DataLineObject(__DataOrcFxObj):
     """Results -> Log results = 'Yes' (default) or 'No'"""
 
 class _DataFatigueAnalysisObject(__DataOrcFxObj):
+    # Main
     CriticalDamageFactor: float
     """Analysis Data -> Critical damage"""
     ThetaCount: int
@@ -378,6 +379,8 @@ class _DataFatigueAnalysisObject(__DataOrcFxObj):
     AnalysisType: str
     """Analysis Type = 'Regular', 'Rainflow', 'Spectral (frequency domain)', or 'Spectral (response RAOs)'"""
     LoadCaseCount: int 
+
+    # Load case page
     """Load cases -> Number of load cases"""
     LoadCaseFileName: list[str]
     """Load cases -> Load case file name"""
@@ -390,6 +393,7 @@ class _DataFatigueAnalysisObject(__DataOrcFxObj):
     LoadCaseExposureTime: list[float]
     """Load cases -> Exposure time (hours)"""
 
+    # Analysis data page
     FromArclength: list[float]
     """Analysis data -> Arc length intervals (m) -> From"""
     ToArclength: list[float]
@@ -403,6 +407,9 @@ class _DataFatigueAnalysisObject(__DataOrcFxObj):
     AnalysisDataSNcurve: list[str]
     """Analysis data -> Stress correction factors -> S-N curve"""
 
+    # S-N curve page
+    SelectedSNcurveIndex: int
+    """S-N curve -> Selected S-N curve index"""
     SNcurveCount: int
     """S-N curves -> S-N curves -> Count"""
     SNcurveName: list[str]
