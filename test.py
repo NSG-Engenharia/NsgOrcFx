@@ -9,9 +9,9 @@ model = NsgOrcFx.Model()
 # line = lines[0]
 line = model.CreateLine()
 
-print(line.params.EndAConnection)
-line.params.EndAConnection = 'Anchored'
-print(line.params.EndAConnection)
+print(line.data.EndAConnection)
+line.data.EndAConnection = 'Anchored'
+print(line.data.EndAConnection)
 
 # model = NsgOrcFx.Model(r'.\tests\stiffeners.dat')
 # lines = model.getAllLines()
@@ -19,4 +19,7 @@ print(line.params.EndAConnection)
 # for line in lines:
 #     print(line.params.Name)
 
-model.SetReducedSimulationDuration(200)
+# model.environment.WaveType = 'JONSWAP'
+# model.SetReducedSimulationDuration(200)
+# model.SaveData(r'tests\tmp\test.dat')
+model.GenerateLoadCases('JONSWAP', [0,45,90], [1.5, 2.0], [5,7,9], r'tests\tmp', reducedIrregDuration=100)

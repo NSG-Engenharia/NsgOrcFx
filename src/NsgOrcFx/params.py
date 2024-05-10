@@ -23,17 +23,284 @@ class __DataOrcFxObj(object):
         else:
             OrcaFlexObject.__setattr__(self.__ofxObj, name, value)
 
-class _GeneralObject(__DataOrcFxObj):
+class _DataGeneralObject(__DataOrcFxObj):
+    # Analysis page
     StageCount: int
     """Analysis -> Stages -> Number of stages"""
     StageDuration: list[float]
-    """Analysis -> Stages -> Duration (s)"""
+    """Analysis -> Stages -> Duration (Time)"""
+
+    # Dynamics page
     ImplicitConstantTimeStep: float
-    """Dynamics -> Parameters -> Time step (s)"""
+    """Dynamics -> Parameters -> Time step (Time)"""
     ImplicitConstantMaxNumOfIterations: int
     """Dynamics -> Parameters -> Maximum number of iterations"""
     ImplicitTolerance: float
     """Dynamics -> Parameters -> Tolerance"""    
+    TargetLogSampleInterval: float
+    """Dynamics -> Logging -> Target sample interval (Time)"""
+
+class _DataEnvinronmentObject(__DataOrcFxObj):
+    # Sea page
+    WaterSurfaceZ: float
+    """Sea -> Surface Z (m)"""
+    KinematicViscosity: float
+    """Sea -> Kinematic viscosity (m^2/s)"""
+    SeaTemperature: float
+    """Sea -> Temperature (°C)"""
+    ReynoldsNumberCalculation: str
+    """
+    Sea -> Reynolds number calculation\n
+      * possible values: Nominal; Cross flow; Flow direction
+    """
+    HorizontalWaterDensityFactor: float
+    """Sea -> Horizontal density variation -> Horizontal water density factor"""
+    VerticalDensityVariation: str
+
+    # Sea density page
+    """
+    Sea density -> Vertical density variation -> Vertical density variation\n
+      * possible values: 'Constant'; 'Bulk modulus'; 'Interpolated'
+    """
+    Density: float
+    """
+    Sea density -> Vertical density variation -> Water density -> Density (M/L^3)\n
+    Applicable when `VerticalDensityVariation = 'Constant'`
+    """
+    SurfaceDensity: float
+    """
+    Sea density -> Vertical density variation -> Water density -> Surface density (Mass/Length^3)\n
+    Applicable when `VerticalDensityVariation = 'Bulk modulus'`
+    """
+    BulkModulus: float
+    """
+    Sea density -> Vertical density variation -> Water density -> Bulk modulus (Pressure)\n
+    Applicable when `VerticalDensityVariation = 'Bulk modulus'`
+    """
+    NumberOfDensityLevels: int    
+    """
+    Sea density -> Vertical density variation -> Water density -> Profile table -> Number of rows\n
+    Applicable when `VerticalDensityVariation = 'Interpolated'`
+    """
+    DensityDepth: list[float]
+    """
+    Sea density -> Vertical density variation -> Water density -> Profile table -> Depth (Length)\n
+    Applicable when `VerticalDensityVariation = 'Interpolated'`
+    """
+    DensityValue: list[float]
+    """
+    Sea density -> Vertical density variation -> Water density -> Profile table -> Density (Mass/Length^3)\n
+    Applicable when `VerticalDensityVariation = 'Interpolated'`
+    """
+
+    # Seabed page
+    SeabedType: str
+    """
+    Seabed -> Shape -> Type
+    possible values: 'Flat'; 'Profile'; '3D'
+    """
+    SeabedOriginX: float
+    """
+    Seabed -> Shape -> Seabed origin (Length) -> X
+    """
+    SeabedOriginY: float
+    """
+    Seabed -> Shape -> Seabed origin (Length) -> Y
+    """
+    SeabedOriginZ: float
+    """
+    Seabed -> Shape -> Seabed origin (Length) -> Z
+    """
+    WaterDepth: float
+    """
+    Seabed -> Shape -> Seabed origin (Length) -> Depth
+    """
+    SeabedSlopeDirection: float
+    """
+    Seabed -> Shape -> Direction (angle)
+    """
+    SeabedSlope: float
+    """
+    Seabed -> Shape -> Slope (angle)
+    """
+    SeabedModel: str
+    """
+    Seabed -> Seabed model
+      * possible values: 'Elastic'; 'Nonlinear soil model'
+    """
+    SeabedNormalStiffness: float
+    """
+    Seabed -> Stiffness & damping -> Stiffeness (Force/Length/Length^2) -> Normal\n
+    Applicable when `SeabedModel = 'Elastic'`
+    """
+    SeabedShearStiffness: float
+    """
+    Seabed -> Stiffness & damping -> Stiffeness (Force/Length/Length^2) -> Shear\n
+    Applicable when `SeabedModel = 'Elastic'`
+    """
+    SeabedDamping: float
+    """
+    Seabed -> Stiffness & damping -> Damping (% of critical)\n
+    Applicable when `SeabedModel = 'Elastic'`
+    """
+
+    # Wave page
+    SelectedWaveTrainIndex: int
+    """Wave -> Wave trains -> Wave train selected (index)"""
+    SelectedWaveTrain: str
+    """Wave -> Wave trains -> Wave train selected (name)"""
+    NumberOfWaveTrains: int
+    """Wave -> Wave trains -> Number of wave trains"""
+    WaveName: list[str]
+    """Wave -> Wave trains -> Name of all wave trains"""
+    WaveDirection: float
+    """Wave -> Data for the selected wave train -> Wave data -> Direction (Angle)"""
+    WaveHeight: float
+    """
+    Wave -> Data for the selected wave train -> Wave data -> Height (Length)\n
+    applicable when `WaveType` is a regular wave
+    """
+    WavePeriod: float
+    """
+    Wave -> Data for the selected wave train -> Wave data -> Period (Time)\n
+    applicable when `WaveType` is a regular wave
+    """
+    WaveOriginX: float
+    """
+    Wave -> Data for the selected wave train -> Wave data -> Wave Origin -> X (Length)
+    """
+    WaveOriginY: float
+    """
+    Wave -> Data for the selected wave train -> Wave data -> Wave Origin -> Y (Length)
+    """
+    WaveTimeOrigin: float
+    """
+    Wave -> Data for the selected wave train -> Wave data -> Wave time origin (Time)
+    """
+    WaveType: str 
+    """
+    Wave -> Data for the selected wave train -> Wave data -> Wave type
+    * possible values: 'Airy'; 'Dean stream'; "Stokes' 5th"; 'Cnoidal'; 'JONSWAP'; 'ISSC'; 'Ochi-Hubble'; 'Torsethaugen'; 'Gaussian swell'; 'User defined spectrum'; 'User specified components'; 'Time history'; 'Response calculation'
+    """
+    WaveCurrentSpeedInWaveDirectionAtMeanWaterLevel: float
+    """
+    Wave -> Data for the selected wave train -> Wave data -> Current speed in wave direction (Length/Time)
+    """
+    WaveStreamFunctionOrder: int
+    """
+    Wave -> Data for the selected wave train -> Wave data -> Stream function order\n
+    applicable when `WaveType = 'Dean stream'`
+    """
+    WaveHs: float
+    """
+    Wave -> Data for the selected wave train -> Wave data -> Hs (Length)\n
+    applicable when `WaveType` is irregular
+    """
+    WaveTz: float
+    """
+    Wave -> Data for the selected wave train -> Wave data -> Tz (Time)\n
+    applicable when `WaveType` is irregular
+    """
+    WaveJONSWAPParameters: str
+    """
+    Wave -> Data for the selected wave train -> Spectral parameters specification
+    * possible values: 'Automatic'; 'Partially specified'; 'Fully specified'
+    """
+    WaveGamma: float
+    """
+    Wave -> Data for the selected wave train -> Spectral parameters -> Gamma (JONSWAP spectrum shape)\n
+    applicable when:
+        * `WaveType = 'JONSWAP'`
+        * `WaveJONSWAPParameters = 'Partially specified'` or  `WaveJONSWAPParameters = 'Fully specified'`
+    """
+    WaveAlpha: float
+    """
+    Wave -> Data for the selected wave train -> Spectral parameters -> Alpha (JONSWAP spectrum factor)\n
+    applicable when:
+        * `WaveType = 'JONSWAP'`
+        * `WaveJONSWAPParameters = 'Fully specified'`
+    """
+    WaveSigma1: float
+    """
+    Wave -> Data for the selected wave train -> Spectral parameters -> Sigma 1 (JONSWAP spectrum factor)\n
+    applicable when:
+        * `WaveType = 'JONSWAP'`
+        * `WaveJONSWAPParameters = 'Fully specified'`
+    """
+    WaveSigma2: float
+    """
+    Wave -> Data for the selected wave train -> Spectral parameters -> Sigma 2 (JONSWAP spectrum factor)\n
+    applicable when:
+        * `WaveType = 'JONSWAP'`
+        * `WaveJONSWAPParameters = 'Fully specified'`
+    """
+    Wavefm: float
+    """
+    Wave -> Data for the selected wave train -> Spectral parameters -> fm (Frequency) \n
+    applicable when:
+        * `WaveType = 'JONSWAP'`
+        * `WaveJONSWAPParameters = 'Partially specified'` or  `WaveJONSWAPParameters = 'Fully specified'`
+    """
+    WaveTp: float
+    """
+    Wave -> Data for the selected wave train -> Spectral parameters -> Tp (Time)\n
+    applicable when:
+        * `WaveType = 'JONSWAP'`
+        * `WaveJONSWAPParameters = 'Partially specified'` or  `WaveJONSWAPParameters = 'Fully specified'`
+    """
+
+    UserSpecifiedRandomWaveSeeds: str
+    """
+    Wave -> Data for the selected wave train -> User specified seeds
+    – possible values: No; Yes
+    \nApplicable when `WaveType` is irregular
+    """
+    WaveSeed: int
+    """
+    Wave -> Data for the selected wave train -> Components -> Seed
+    \nApplicable when `WaveType` is irregular
+    """
+    WaveNumberOfComponents: int
+    """
+    Wave -> Data for the selected wave train -> Components -> Number
+    \nApplicable when `WaveType` is irregular
+    """
+    WaveSpectrumMinRelFrequency: float
+    """
+    Wave -> Data for the selected wave train -> Components -> Relative frequency range -> Minimum
+    – possible values: No; Yes
+    \nApplicable when `WaveType` is irregular
+    """
+    WaveSpectrumMaxRelFrequency: float
+    """
+    Wave -> Data for the selected wave train -> Components -> Relative frequency range -> Maximum
+    – possible values: No; Yes
+    \nApplicable when `WaveType` is irregular
+    """
+    WaveSpectrumMaxComponentFrequencyRange: float
+    """
+    Wave -> Data for the selected wave train -> Components -> Maximum component frequency range (Hz)
+    – possible values: No; Yes
+    \nApplicable when `WaveType` is irregular
+    """
+
+    KinematicStretchingMethod: str
+    """
+    Wave -> Kinematic streching method
+    – possible values: Vertical stretching; Wheeler stretching; Extrapolation stretching
+    """
+    WaveFrequencySpectrumDiscretisationMethod: str
+    """
+    Wave -> Frequency spectrum discretisation method
+    – possible values: Arithmetic progression; Geometric progression; Equal energy; Equal energy, 9.3a, deprecated; Equal energy, legacy, deprecated
+    \nApplicable when `WaveType` is irregular
+    """
+
+
+
+
+
+
 
 class _DataLineObject(__DataOrcFxObj):
     EndAConnection: str 

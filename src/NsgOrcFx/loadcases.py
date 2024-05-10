@@ -33,7 +33,7 @@ def __setEnvironment(
         env.WaveHs = waveHeight
 
         #reset wave time origin for each case
-        env.SimulationTimeOrigin = 0.0
+        env.WaveTimeOrigin = 0.0
 
         if reducedIrregDuration == None:
             model.general.StageDuration[0] = 1*wavePeriod
@@ -98,7 +98,10 @@ def GenLoadCases(
             for direction in waveDirList:
                 cont += 1
 
-                caseName = f'LC{__fi(cont, nDigits)}_Hs{height:0.2f}m_Tp{period:00.2f}s_alpha{direction}'
+                if isRegularWave(waveType):
+                    caseName = f'LC{__fi(cont, nDigits)}_H={height:0.2f}m_T={period:00.2f}s_dir={direction}'
+                else:
+                    caseName = f'LC{__fi(cont, nDigits)}_Hs={height:0.2f}m_Tp={period:00.2f}s_dir={direction}'
     
                 __setEnvironment(
                     model, direction, waveType, height, period, 

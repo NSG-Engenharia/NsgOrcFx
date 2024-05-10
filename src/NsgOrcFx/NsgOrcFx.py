@@ -47,6 +47,7 @@ auxfuncs = AuxFuncs()
 # ==== MODEL CLASS ==== #
 class Model(orc.Model):
     general: OrcaFlexGeneralObject
+    environment: OrcaFlexEnvironmentObject
     auxfuncs = auxfuncs
    
     def __checkOrcaFlexVersion(self) -> bool:
@@ -187,7 +188,7 @@ class Model(orc.Model):
         Generates load cases from the current model for the list of wave direction, 
         height and period provided and saves the files at the specified folder
         
-        * waveType: 'regular' (e.g., Dean stream) or 'JONSWAP'
+        * waveType: e.g., 'Dean stream' (regular) or 'JONSWAP' (irregular)
         * waveDirList: list of wave direction
         * waveHeightList: list of wave height (Hs for irregular wave)
         * wavePeriodList: list of wave period (Tp for erregular wave)

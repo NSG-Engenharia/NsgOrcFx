@@ -12,17 +12,21 @@ from . import params
 class OrcaFlexObject(__ofx.OrcaFlexObject):
     def __init__(self, obj: __ofx.OrcaFlexObject) -> None:
         super().__init__(obj.modelHandle, obj.handle, obj.type)
-        object.__setattr__(self, 'params', params._DataLineObject(self))
+        object.__setattr__(self, 'data', params._DataLineObject(self))
 
 
 class OrcaFlexGeneralObject(OrcaFlexObject):
-    params: params._GeneralObject
+    data: params._DataGeneralObject
+
+class OrcaFlexEnvironmentObject(OrcaFlexObject):
+    data: params._DataEnvinronmentObject
+
 
 class OrcaFlexConstraint(OrcaFlexObject):
     pass
 
 class OrcaFlexLineObject(OrcaFlexObject, __ofx.OrcaFlexLineObject):
-    params: params._DataLineObject
+    data: params._DataLineObject
 
     def totalLength(self) -> float:
         self.__init__()
@@ -74,7 +78,7 @@ class OrcaFlexLineObject(OrcaFlexObject, __ofx.OrcaFlexLineObject):
         return EndA, EndB
 
 class FatigueAnalysis(__ofx.FatigueAnalysis):
-    params: params._DataFatigueAnalysisObject
+    data: params._DataFatigueAnalysisObject
 
     def __selectSNCurveByName(self, name: str, environment: str) -> SNCurves.SNCurve:
         """Name (e.g, 'F1') and environment ('air' or 'seawater')"""
