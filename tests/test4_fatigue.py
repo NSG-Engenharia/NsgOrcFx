@@ -4,8 +4,8 @@ Example of defining fatigue analysis and getting the fatigue life calculated
 
 import NsgOrcFx
 
-simFile = r'tests\tmp\fatigue.sim'
-ftgFile = r'tests\tmp\fatigue.ftg'
+simFile = r'tests\tmptestfiles\fatigue.sim'
+ftgFile = r'tests\tmptestfiles\fatigue.ftg'
 
 model = NsgOrcFx.Model()
 model.CreateLine()

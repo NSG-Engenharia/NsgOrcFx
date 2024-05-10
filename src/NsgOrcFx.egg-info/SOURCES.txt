@@ -1,7 +1,6 @@
 LICENSE
 README.md
 pyproject.toml
-src/NsgOrcFx/NsgOrcFx.py
 src/NsgOrcFx/__init__.py
 src/NsgOrcFx/auxfuncs.py
 src/NsgOrcFx/classes.py
@@ -9,6 +8,7 @@ src/NsgOrcFx/constants.py
 src/NsgOrcFx/environment.py
 src/NsgOrcFx/fatigue.py
 src/NsgOrcFx/loadcases.py
+src/NsgOrcFx/main.py
 src/NsgOrcFx/modal.py
 src/NsgOrcFx/objauxfuncs.py
 src/NsgOrcFx/params.py

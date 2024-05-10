@@ -11,7 +11,7 @@ model.CreateLine()
 directions = [0, 45, 90]
 heights = [1.5, 2.0, 3.0]
 periods = [5, 7, 9]
-outFolder = 'tmp'
+outFolder = r'tests\tmptestfiles'
 
 # Regular waves
 model.GenerateLoadCases('Dean stream', directions, heights, periods, outFolder)
