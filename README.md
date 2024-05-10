@@ -4,6 +4,8 @@ Library of tools for the OrcaFlex API
 This package wraps the original API from Orcina (OrcFxAPI) to include:
 * methods: pre- and post-processing tools such as line selection, load case generation, modal and fatigue analysis
 * coding facilities: auto-complete and hints with descriptions in IDE
+
+\
 All the attributes and methods from the source (OrcFxAPI) still accessible in the same way.
 
 \
