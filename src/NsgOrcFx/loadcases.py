@@ -23,8 +23,8 @@ def __setEnvironment(
 
     # regular wave
     if isRegularWave(waveType): 
-        model.general.WaveHeight = waveHeight
-        model.general.WavePeriod = wavePeriod
+        env.WaveHeight = waveHeight
+        env.WavePeriod = wavePeriod
         model.general.StageDuration[0] = 1*wavePeriod
         model.general.StageDuration[1] = nTimesPeriodStage1*wavePeriod
 
