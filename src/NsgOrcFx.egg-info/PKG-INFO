@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: NsgOrcFx
-Version: 1.0.15
+Version: 1.0.16
 Summary: Package with additional tools to the OrcFxAPI package
 Author-email: NSG Engenharia <software@nsgeng.com>
 Project-URL: Homepage, https://github.com/NSG-Engenharia/NsgOrcFx
@@ -11,6 +11,10 @@ Classifier: Operating System :: Microsoft :: Windows
 Requires-Python: >=3.8
 Description-Content-Type: text/markdown
 License-File: LICENSE
+Requires-Dist: OrcFxAPI>=11.4.2
+Requires-Dist: numpy>=1.26.4
+Requires-Dist: pandas>=2.2.2
+Requires-Dist: scipy>=1.13.0
 
 # NsgOrcFx
 Library of tools for the OrcaFlex API
