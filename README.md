@@ -65,7 +65,7 @@ model.Save('reduced.dat')
 # is in the midle of the sea elevation history
 
 ```
-![Screenshot of Wave preview (Environment -> Waves preview -> View profile) for a simulation of irregular wave with reduced duration based on the largest rise/fall occurence](documentation/images/wave_preview.png)
+![Screenshot of Wave preview (Environment -> Waves preview -> View profile) for a simulation of irregular wave with reduced duration based on the largest rise/fall occurence](https://github.com/NSG-Engenharia/NsgOrcFx/blob/main/documentation/images/wave_preview.png?raw=True)
 
 
 ## Example 3 - Generate load cases
