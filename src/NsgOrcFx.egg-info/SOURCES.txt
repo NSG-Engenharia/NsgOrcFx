@@ -12,6 +12,8 @@ src/NsgOrcFx/main.py
 src/NsgOrcFx/modal.py
 src/NsgOrcFx/objauxfuncs.py
 src/NsgOrcFx/params.py
+src/NsgOrcFx/raos.py
+src/NsgOrcFx/raos_old.py
 src/NsgOrcFx/sncurves.py
 src/NsgOrcFx/sortlines.py
 src/NsgOrcFx/utils.py
@@ -27,3 +29,4 @@ tests/test2_searchwave.py
 tests/test3_generate-loadcases.py
 tests/test4_modal-analysis.py
 tests/test5_fatigue.py
+tests/test5_rao-plots.py

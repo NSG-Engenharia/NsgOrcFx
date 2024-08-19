@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: NsgOrcFx
-Version: 1.0.18
+Version: 1.0.19
 Summary: Package with additional tools to the OrcFxAPI package
 Author-email: NSG Engenharia <software@nsgeng.com>
 Project-URL: Homepage, https://github.com/NSG-Engenharia/NsgOrcFx
@@ -15,6 +15,7 @@ Requires-Dist: OrcFxAPI>=11.4.2
 Requires-Dist: numpy>=1.26.4
 Requires-Dist: pandas>=2.2.2
 Requires-Dist: scipy>=1.13.0
+Requires-Dist: matplotlib>=3.8.0
 
 # NsgOrcFx
 Library of tools for the OrcaFlex API
@@ -167,5 +168,20 @@ analysis.Save(ftgFile)
 lifePerNode = analysis.getLifeList()
 print(lifePerNode)
 ```
+
+
+## Example 6 - Generates RAO plots from vessel type data
+```
+import NsgOrcFx as ofx
+
+model = ofx.Model()
+
+# Create a 'Vessel Type' object with default data
+model.CreateObject(ofx.ObjectType.VesselType)
+
+# Create RAO plots (amplitude and phase) and save to the defined folder
+model.SaveRAOplots(r'tests\tmptestfiles')
+```
+![ plot generated with SaveRAOplots() method](https://github.com/NSG-Engenharia/NsgOrcFx/blob/main/documentation/images/Vessel_type1_Amplitude.png?raw=True)
 
 
