@@ -149,7 +149,6 @@ def SetReducedSimDuration(
         reducedDuration: float = 200., 
         refstormduration = 10800.,
         fallOrRise: str ='rise', # 'rise' or 'fall'
-        waveTrainIndex: int = 0,
         extremeWavePosition: list[float] = [0.,0.]
         ) -> None:
     '''
@@ -164,8 +163,8 @@ def SetReducedSimDuration(
         Obs.: the Tp value defined in the model will be used for the Stage 0.
     '''        
     env = model.environment
-    previousWaveTrainIndex = env.SelectedWaveTrainIndex
-    env.SelectedWaveTrainIndex = waveTrainIndex
+    # previousWaveTrainIndex = env.SelectedWaveTrainIndex
+    # env.SelectedWaveTrainIndex = waveTrainIndex
 
     if isRegularWave(env.WaveType):
         raise Exception(f'Reduced simulation time approach is only \
@@ -181,14 +180,19 @@ def SetReducedSimDuration(
     elif fallOrRise == 'fall': tSel = tFall
     else: raise Exception(f'Input {fallOrRise} not allowed to "fallOrRise".')
 
-    env.WaveTimeOrigin = -tSel + reducedDuration/2
+    largestTz = 0
+    for i in range(env.NumberOfWaveTrains):
+        env.SelectedWaveTrainIndex = i
+        env.WaveTimeOrigin += -tSel + reducedDuration/2
+        if not isRegularWave(env.WaveType):
+            largestTz = max(largestTz, env.WaveTz)
     
+    # Tz = env.WaveTz
     general = model.general
-    Tz = env.WaveTz
-    general.StageDuration[0] = Tz
+    general.StageDuration[0] = largestTz # Tz
     general.StageDuration[1] = reducedDuration
 
-    env.SelectedWaveTrainIndex = previousWaveTrainIndex
+    # env.SelectedWaveTrainIndex = previousWaveTrainIndex
     # env.WavePreviewPositionX, env.WavePreviewPositionY = prevWavePreviewPosition[0], prevWavePreviewPosition[1]
 
 
@@ -215,7 +219,8 @@ def GetLargestRiseAndFall(
     #so I don't actually need to report any of the individual waves 
     #so I set the search parameters to arbitrarily high values:
     env.WaveSearchMinHeight = 1e9
-    env.WaveSearchMinSteepness = 1e9
+    if env.NumberOfWaveTrains == 1:
+        env.WaveSearchMinSteepness = 1e9
 
     file = filename + '.txt'
     try:   

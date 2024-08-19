@@ -19,6 +19,7 @@ __status__ = "Development"
 from typing import Union
 from types import FunctionType
 
+import OrcFxAPI
 from OrcFxAPI import *
 
 from .classes import *
@@ -180,7 +181,6 @@ class Model(orc.Model):
             reducedDuration: float, 
             refstormduration = 10800.,
             fallOrRise: str ='rise', # 'rise' or 'fall'
-            waveTrainIndex: int = 0,
             extremeWavePosition: list[float] = [0.,0.]
             ) -> None:
         '''
@@ -193,7 +193,7 @@ class Model(orc.Model):
 
             Obs.: the Tp value defined in the model will be used for the Stage 0.
         ''' 
-        SetReducedSimDuration(self, reducedDuration, refstormduration, fallOrRise, waveTrainIndex, extremeWavePosition)
+        SetReducedSimDuration(self, reducedDuration, refstormduration, fallOrRise, extremeWavePosition)
 
     def GenerateLoadCases(
             self,
@@ -260,7 +260,7 @@ class Model(orc.Model):
 
         return modes
 
-    def SaveRAOplots(self, folder: str, vesseltype: ofx.OrcaFlexObject = None, figtype: str = 'png') -> None:
+    def SaveRAOplots(self, folder: str, vesseltype: OrcFxAPI.OrcaFlexObject = None, figtype: str = 'png') -> None:
         '''
         Generate the Amp and Phase RAO plots
         * folder: where to save the plot files
@@ -268,7 +268,17 @@ class Model(orc.Model):
         * figtype: extension of the figure files ('png', 'svg', 'pdf' or 'eps')
         '''        
         # GenRAOplots(self, folder, figtype, vesseltype)
-        GetRAOData(vesseltype)
+        raoPlots = RaoPlot()
+        raoPlots.raoOutputFolder = folder
+        if vesseltype == None:
+            vesselTypeList = [obj for obj in self.objects if obj.type == OrcFxAPI.ObjectType.VesselType]
+        else:
+            vesselTypeList = [vesseltype]
+
+        raoPlots.FigFormat = figtype
+
+        for vt in vesselTypeList:
+            raoPlots.GetRAOData(vt)
 
 
 class LineSelection(list[OrcaFlexLineObject]):
