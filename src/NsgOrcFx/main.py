@@ -27,7 +27,7 @@ from .objauxfuncs import *
 from .modal import *
 from .loadcases import *
 from .utils import *
-
+from .raos import *
 
 # ======= CONSTANTS ======== #
 requiredOrcFxVer = '11.3a'
@@ -260,6 +260,15 @@ class Model(orc.Model):
 
         return modes
 
+    def SaveRAOplots(self, folder: str, vesseltype: ofx.OrcaFlexObject = None, figtype: str = 'png') -> None:
+        '''
+        Generate the Amp and Phase RAO plots
+        * folder: where to save the plot files
+        * vesseltype: vessel type object containing the RAO to be plotted. All, if 'None'.
+        * figtype: extension of the figure files ('png', 'svg', 'pdf' or 'eps')
+        '''        
+        # GenRAOplots(self, folder, figtype, vesseltype)
+        GetRAOData(vesseltype)
 
 
 class LineSelection(list[OrcaFlexLineObject]):
