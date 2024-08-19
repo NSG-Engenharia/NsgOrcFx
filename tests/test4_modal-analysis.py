@@ -2,9 +2,13 @@
 Example of calculating modal analysis and getting the normalized modal shape 
 """
 
-import NsgOrcFx
+import sys
+from os import path
+sys.path.append( path.dirname( path.dirname( path.abspath(__file__) ) ) )
 
-model = NsgOrcFx.Model()
+from src import NsgOrcFx as ofx
+
+model = ofx.Model()
 model.CreateLine()
 
 

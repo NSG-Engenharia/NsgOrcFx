@@ -2,17 +2,21 @@
 Example of defining fatigue analysis and getting the fatigue life calculated
 """
 
-import NsgOrcFx
+import sys
+from os import path
+sys.path.append( path.dirname( path.dirname( path.abspath(__file__) ) ) )
+
+from src import NsgOrcFx as ofx
 
 simFile = r'tests\tmptestfiles\fatigue.sim'
 ftgFile = r'tests\tmptestfiles\fatigue.ftg'
 
-model = NsgOrcFx.Model()
+model = ofx.Model()
 model.CreateLine()
 model.RunSimulation()
 model.Save(simFile)
 
-analysis = NsgOrcFx.FatigueAnalysis()
+analysis = ofx.FatigueAnalysis()
 analysis.data.AnalysisType = 'Rainflow'
 analysis.data.LoadCaseCount = 1
 analysis.addLoadCase(simFile)

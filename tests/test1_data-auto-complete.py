@@ -2,9 +2,13 @@
 Example of using auto complete feature of IDE (e.g. VS Code and Spyder)
 """
 
-import NsgOrcFx
+import sys
+from os import path
+sys.path.append( path.dirname( path.dirname( path.abspath(__file__) ) ) )
 
-model = NsgOrcFx.Model()
+from src import NsgOrcFx as ofx
+
+model = ofx.Model()
 line = model.CreateLine()
 """
 Create line:
