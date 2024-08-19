@@ -41,8 +41,34 @@ lines = model.getAllLines()
 line = lines[0]
 ```
 
+## Example 2 - Reduced simulation time for irregular wave
+```
+import NsgOrcFx as ofx
 
-## Example 2 - Generate load cases
+model = ofx.Model()
+
+# set irregular wave
+model.environment.data.WaveType = 'JONSWAP'
+model.environment.data.WaveHs = 2.5
+model.environment.data.WaveGamma = 2
+model.environment.data.WaveTp = 8
+
+# set reduced simulation duration with 200 seconds
+model.SetReducedSimulationDuration(200)
+
+# save data file to check the wave history
+model.Save('reduced.dat')
+
+# after executing this code, open the generated data file
+# then open Environment -> Waves preview, and set duration of 200s 
+# click in View profile and observe that the largest event (rise or fall)
+# is in the midle of the sea elevation history
+
+```
+![Screenshot of Wave preview (Environment -> Waves preview -> View profile) for a simulation of irregular wave with reduced duration based on the largest rise/fall occurence](https://github.com/NSG-Engenharia/NsgOrcFx/blob/main/documentation/images/wave_preview.png?raw=True)
+
+
+## Example 3 - Generate load cases
 ```
 import NsgOrcFx
 
@@ -74,7 +100,7 @@ model.GenerateLoadCases('JONSWAP', directions, heights, periods, outFolder, redu
 ```
 
 
-## Example 3 - Calculating modal analysis and getting the normalized modal shape 
+## Example 4 - Calculating modal analysis and getting the normalized modal shape 
 ```
 import NsgOrcFx
 
@@ -96,7 +122,7 @@ print(arcLengths, Ux, Uy, Uz)
 ```
 
 
-## Example 4 - Defining fatigue analysis and getting the fatigue life calculated
+## Example 5 - Defining fatigue analysis and getting the fatigue life calculated
 ```
 import NsgOrcFx
 

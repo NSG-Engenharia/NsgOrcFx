@@ -20,8 +20,10 @@ src/NsgOrcFx/weightaux.py
 src/NsgOrcFx.egg-info/PKG-INFO
 src/NsgOrcFx.egg-info/SOURCES.txt
 src/NsgOrcFx.egg-info/dependency_links.txt
+src/NsgOrcFx.egg-info/requires.txt
 src/NsgOrcFx.egg-info/top_level.txt
 tests/test1_data-auto-complete.py
-tests/test2_generate-loadcases.py
-tests/test3_modal-analysis.py
-tests/test4_fatigue.py
+tests/test2_searchwave.py
+tests/test3_generate-loadcases.py
+tests/test4_modal-analysis.py
+tests/test5_fatigue.py
