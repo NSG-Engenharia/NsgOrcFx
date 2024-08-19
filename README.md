@@ -163,4 +163,6 @@ model.CreateObject(ofx.ObjectType.VesselType)
 # Create RAO plots (amplitude and phase) and save to the defined folder
 model.SaveRAOplots(r'tests\tmptestfiles')
 ```
+![ plot generated with SaveRAOplots() method](https://github.com/NSG-Engenharia/NsgOrcFx/blob/main/documentation/images/Vessel_type1_Amplitude.png?raw=True)
+
 
