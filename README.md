@@ -151,3 +151,16 @@ print(lifePerNode)
 ```
 
 
+## Example 6 - Generates RAO plots from vessel type data
+```
+import NsgOrcFx as ofx
+
+model = ofx.Model()
+
+# Create a 'Vessel Type' object with default data
+model.CreateObject(ofx.ObjectType.VesselType)
+
+# Create RAO plots (amplitude and phase) and save to the defined folder
+model.SaveRAOplots(r'tests\tmptestfiles')
+```
+
