@@ -23,10 +23,13 @@ line = model.CreateLine()
 
 ```
 The data name may be found in the `data` attribute with the auto complete of the IDE (e.g., Visual Studio Code, Spyder, and PyCharm).
-![Screenshot of auto-complete with the 'data' component of objects (e.g., line.data.{data name})](https://github.com/NSG-Engenharia/NsgOrcFx/blob/main/documentation/images/autocomplete_linedata.png?raw=True)
+
+![Screenshot of auto-complete with the 'data' component of objects (e.g., line.data.{data name})](https://github.com/NSG-Engenharia/NsgOrcFx/blob/main/documentation/images/autocomplete_linedata.jpg?raw=True)
+
 
 In addition, a hint shows the description of the parameter (mouse cursor stopped in the data name).
-![Screenshot of hint with the 'data' component of objects (e.g., line.data.{data name})](https://github.com/NSG-Engenharia/NsgOrcFx/blob/main/documentation/images/hint_linedata.png?raw=True)
+
+![Screenshot of hint with the 'data' component of objects (e.g., line.data.{data name})](https://github.com/NSG-Engenharia/NsgOrcFx/blob/main/documentation/images/hint_linedata.jpg?raw=True)
 
 
 In the exemple below, data names of `general`, `environment`, and `line` objects are accessed 
