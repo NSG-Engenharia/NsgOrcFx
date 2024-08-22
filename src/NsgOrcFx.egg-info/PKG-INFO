@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: NsgOrcFx
-Version: 1.0.19
+Version: 1.0.21
 Summary: Package with additional tools to the OrcFxAPI package
 Author-email: NSG Engenharia <software@nsgeng.com>
 Project-URL: Homepage, https://github.com/NSG-Engenharia/NsgOrcFx
@@ -40,13 +40,22 @@ import NsgOrcFx
 model = NsgOrcFx.Model()
 line = model.CreateLine()
 
-# The data name may be found in the `data` attribute with the auto complete of the IDE
-# in addition, a hint shows the description of the parameter (mouse cursor stopped in the data name)
+```
+The data name may be found in the `data` attribute with the auto complete of the IDE (e.g., Visual Studio Code, Spyder, and PyCharm).
 
+![Screenshot of auto-complete with the 'data' component of objects (e.g., line.data.{data name})](https://github.com/NSG-Engenharia/NsgOrcFx/blob/main/documentation/images/autocomplete_linedata.jpg?raw=True)
+
+
+In addition, a hint shows the description of the parameter (mouse cursor stopped in the data name).
+
+![Screenshot of hint with the 'data' component of objects (e.g., line.data.{data name})](https://github.com/NSG-Engenharia/NsgOrcFx/blob/main/documentation/images/hint_linedata.jpg?raw=True)
+
+
+In the exemple below, data names of `general`, `environment`, and `line` objects are accessed 
+```
 model.general.data.ImplicitConstantTimeStep = 0.01 # data from general object
 model.environment.data.WaveHeight = 5.0 # data from environment object
 line.data.EndAConnection = 'Anchored' # data form the line object
-
 ```
 
 The line could be alse located by name with the following method. Although it could be done with the original method (`line = model['Line1']`), the new method is recommended to allow the functionality of auto-complete (`data` attribute)
@@ -57,7 +66,7 @@ line = model.findLineByName('Line1')
 A list of all lines in the model may be retrieved and then select the first one by
 ```
 lines = model.getAllLines()
-line = lines[0]
+line1 = lines[0]
 ```
 
 ## Example 2 - Reduced simulation time for irregular wave
