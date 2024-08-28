@@ -14,7 +14,7 @@ class SNCurve:
     environment: str          # air or seawater
     m1: float               # m for the low cycle region (N < N_boundary)
     log_a1: float           # log(a) for the low cycle region (N < N_boundary)
-    N_boundary: int         # number of cycles between the low and high cycle regions
+    N_boundary: int = None         # number of cycles between the low and high cycle regions
     m2: float = None        # m for the hogh cycle region (N > N_boundary)
     log_a2: float = None    # log(a) for the hogh cycle region (N > N_boundary)
 
@@ -34,8 +34,13 @@ class SNCurve:
         analysis.SNcurveSpecificationMethod = 'Parameters'
         analysis.SNcurvem1 = self.m1
         analysis.SNcurveloga1 = self.log_a1 + 3*self.m1 # pressure in kPa
-        analysis.SNcurveRegionBoundary = self.N_boundary
-        analysis.SNcurvem2 = self.m2
+
+        if self.m2 != None:
+            analysis.SNcurveRegionBoundary = self.N_boundary
+            analysis.SNcurvem2 = self.m2
+        else:
+            analysis.SNcurveRegionBoundary = _ofx.OrcinaInfinity()
+
         analysis.SNcurveMeanStressModel = 'None'
 
 
