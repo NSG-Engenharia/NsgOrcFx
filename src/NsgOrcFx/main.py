@@ -75,7 +75,8 @@ class Model(orc.Model):
         return getOrcaVersion()
 
     def __getitem__(self, name: str) -> OrcaFlexObject:
-        return OrcaFlexObject(super().__getitem__(name)) 
+        # return OrcaFlexObject(super().__getitem__(name))  # this generated error when calling methods with returned items
+        return super().__getitem__(name)
     
     def Save(self, file: str) -> None:
         """
