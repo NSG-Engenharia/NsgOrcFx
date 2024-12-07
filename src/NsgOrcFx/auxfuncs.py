@@ -149,7 +149,8 @@ def SetReducedSimDuration(
         reducedDuration: float = 200., 
         refstormduration = 10800.,
         fallOrRise: str ='rise', # 'rise' or 'fall'
-        extremeWavePosition: list[float] = [0.,0.]
+        extremeWavePosition: list[float] = [0.,0.],
+        iniWaveTimeOrigin: float | None = 0.0
         ) -> None:
     '''
     Reduces the simulation time for irreguar wave based on the highest fall/rise
@@ -159,12 +160,17 @@ def SetReducedSimDuration(
         - fallOrRise: if time selection is based on the largest 'fall' or 'rise' event
         - waveTrainIndex: based on which wave train largest fall or rise must be selected
         - extremeWavePosition: position of wave origin for search
+        - iniWaveTimeOrigin: initial wave time origin to search for the next extreme event. If `None`, keep the value in the model for each wave train.
 
         Obs.: the Tp value defined in the model will be used for the Stage 0.
     '''        
     env = model.environment
     # previousWaveTrainIndex = env.SelectedWaveTrainIndex
     # env.SelectedWaveTrainIndex = waveTrainIndex
+    if iniWaveTimeOrigin != None:
+        for i in range(env.NumberOfWaveTrains):
+            env.SelectedWaveTrainIndex = i
+            env.WaveTimeOrigin = iniWaveTimeOrigin
 
     if isRegularWave(env.WaveType):
         raise Exception(f'Reduced simulation time approach is only \

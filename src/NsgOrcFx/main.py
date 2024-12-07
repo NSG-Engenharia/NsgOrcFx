@@ -181,7 +181,8 @@ class Model(orc.Model):
             reducedDuration: float, 
             refstormduration = 10800.,
             fallOrRise: str ='rise', # 'rise' or 'fall'
-            extremeWavePosition: list[float] = [0.,0.]
+            extremeWavePosition: list[float] = [0.,0.],
+            iniWaveTimeOrigin: float | None = 0.0
             ) -> None:
         '''
         Reduces the simulation time for irreguar wave based on the highest fall/rise
@@ -190,10 +191,11 @@ class Model(orc.Model):
             - fallOrRise: if time selection is based on the largest 'fall' or 'rise' event
             - waveTrainIndex: based on which wave train largest fall or rise must be selected
             - extremeWavePosition: position to search the largest 'fall' or 'rise'
+            - iniWaveTimeOrigin: initial wave time origin to search for the next extreme event. If `None`, keep the value in the model for each wave train.
 
             Obs.: the Tp value defined in the model will be used for the Stage 0.
         ''' 
-        SetReducedSimDuration(self, reducedDuration, refstormduration, fallOrRise, extremeWavePosition)
+        SetReducedSimDuration(self, reducedDuration, refstormduration, fallOrRise, extremeWavePosition, iniWaveTimeOrigin)
 
     def GenerateLoadCases(
             self,
