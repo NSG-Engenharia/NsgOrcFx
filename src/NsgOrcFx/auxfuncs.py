@@ -167,14 +167,18 @@ def SetReducedSimDuration(
     env = model.environment
     # previousWaveTrainIndex = env.SelectedWaveTrainIndex
     # env.SelectedWaveTrainIndex = waveTrainIndex
-    if iniWaveTimeOrigin != None:
-        for i in range(env.NumberOfWaveTrains):
-            env.SelectedWaveTrainIndex = i
+    hasIrregularWave = False
+    for i in range(env.NumberOfWaveTrains):
+        env.SelectedWaveTrainIndex = i
+        if iniWaveTimeOrigin != None:
             env.WaveTimeOrigin = iniWaveTimeOrigin
+        if not isRegularWave(env.WaveType):
+            hasIrregularWave = True
 
-    if isRegularWave(env.WaveType):
-        raise Exception(f'Reduced simulation time approach is only \
-                        valid for irregular waves. Wave type{env.WaveType} not supported.')
+    if not hasIrregularWave:
+        raise Exception(
+            'Reduced simulation time approach is only '+\
+            'valid when, at least, one have train has irregular waves.')
     
     # env.WaveTimeOrigin = 0 # uses the value defined by user
     # prevWavePreviewPosition = [env.WavePreviewPositionX, env.WavePreviewPositionY]
