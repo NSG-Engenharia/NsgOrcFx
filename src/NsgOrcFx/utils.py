@@ -57,8 +57,23 @@ def creatEvenlySpacedData(
         yValueLists: list[list[float]],
         kind: str='cubic'
         ) -> tuple[list[float], list[float]]:
-    """Interpolates the y values into a equally spaced x values"""
+    """
+    Interpolates the y values into a equally spaced x values
+    * xValues: list of x values
+    * yValueLists: lists of y values
+    * kind: 'nearest', 'linear', 'quadratic' or 'cubic'
+    * return: a list of the interpolated y value for each y list provided in `yValueLists`
+    """
+    kind_nMin = ['nearest', 'linear', 'quadratic', 'cubic']
+    try:
+        nPointsMin = kind_nMin.index(kind) + 1
+    except:
+        raise Exception(f"Error! Interpolation kind '{kind}' not recognized. The supported options are 'nearest', 'linear', 'quadratic' or 'cubic'.")
     
+    nPoints = len(xValues)
+    if nPoints < nPointsMin:
+        kind = kind_nMin[nPoints-1]
+
     minDelta = xValues[1] - xValues[0]
     for i in range(2, len(xValues)):
         delta = xValues[i]-xValues[i-1]
