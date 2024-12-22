@@ -64,13 +64,16 @@ def creatEvenlySpacedData(
     * kind: 'nearest', 'linear', 'quadratic' or 'cubic'
     * return: a list of the interpolated y value for each y list provided in `yValueLists`
     """
+    nPoints = len(xValues)
+    if nPoints < 3: # this method (create evenly spaced data) is pointless if the lists have less than 3 values
+        return xValues, yValueLists
+    
     kind_nMin = ['nearest', 'linear', 'quadratic', 'cubic']
     try:
         nPointsMin = kind_nMin.index(kind) + 1
     except:
         raise Exception(f"Error! Interpolation kind '{kind}' not recognized. The supported options are 'nearest', 'linear', 'quadratic' or 'cubic'.")
     
-    nPoints = len(xValues)
     if nPoints < nPointsMin:
         kind = kind_nMin[nPoints-1]
 
