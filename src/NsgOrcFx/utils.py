@@ -56,13 +56,13 @@ def creatEvenlySpacedData(
         xValues: list[float], 
         yValueLists: list[list[float]],
         kind: str='cubic'
-        ) -> tuple[list[float], list[float]]:
+        ) -> tuple[list[float], list[list[float]]]:
     """
     Interpolates the y values into a equally spaced x values
     * xValues: list of x values
     * yValueLists: lists of y values
     * kind: 'nearest', 'linear', 'quadratic' or 'cubic'
-    * return: a list of the interpolated y value for each y list provided in `yValueLists`
+    * return: a tuple with a list of the new positions (x values) and a list of the interpolated y values for each y list provided in `yValueLists`
     """
     nPoints = len(xValues)
     if nPoints < 3: # this method (create evenly spaced data) is pointless if the lists have less than 3 values
