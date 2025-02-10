@@ -29,6 +29,7 @@ from .modal import *
 from .loadcases import *
 from .utils import *
 from .raos import *
+from .constraintloads import ExtremeLoadsFromConstraints
 
 # ======= CONSTANTS ======== #
 requiredOrcFxVer = '11.3a'
