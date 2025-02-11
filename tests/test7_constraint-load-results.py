@@ -36,6 +36,8 @@ line.PolarR[1], line.EndBY, line.EndBHeightAboveSeabed = 155, 0, 0
 line.Length[0] = 200
 
 
-if __name__ == '__main__':
-    model.GenerateLoadCases('Dean stream', [135,180,225], [6,7], [9,10], '.')
-    ofx.ProcMultiThread('.','.')
+# if __name__ == '__main__':
+model.GenerateLoadCases('Dean stream', [135,180,225], [6,7], [9,10], '.')
+ofx.ProcMultiThread('.','.')
+
+ofx.ExtremeLoadsFromConstraints('.','.\Results.xlsx')

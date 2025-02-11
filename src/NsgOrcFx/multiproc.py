@@ -4,7 +4,8 @@
 
 import os
 from dataclasses import dataclass
-from multiprocessing import Process
+# from multiprocessing import Process
+import threading
 import OrcFxAPI as orc
 
 @dataclass
@@ -61,12 +62,14 @@ def __distributeLCs(cfg: MultiProcConfig) -> list[list[str]]:
 
 
 def __runMultiThreading(cfg: MultiProcConfig):
-    procs: list[Process] = []
+    # procs: list[Process] = []
+    procs: list[threading.Thread] = []
 
     for i in range(cfg.nProcs):        
         group = cfg.groupList[i]
         if len(group) > 0:
-            newProc = Process(target=__runLCs, args=(i, group, cfg))
+            # newProc = Process(target=__runLCs, args=(i, group, cfg))
+            newProc = threading.Thread(target=__runLCs, args=(i, group, cfg))
             procs.append(newProc)
 
     for p in procs:
@@ -74,8 +77,8 @@ def __runMultiThreading(cfg: MultiProcConfig):
 
     for p in procs:
         p.join()
-        if p.is_alive():
-            p.terminate()
+        # if p.is_alive():
+        #     p.terminate()
 
     __printSummary(cfg.procResults)
         
