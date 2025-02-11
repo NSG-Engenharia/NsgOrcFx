@@ -35,7 +35,7 @@ line.PolarReferenceAxes[1] = 'Global Axes'
 line.PolarR[1], line.EndBY, line.EndBHeightAboveSeabed = 155, 0, 0
 line.Length[0] = 200
 
-# generate the load cases
+# generate the load cases (Example #3)
 model.GenerateLoadCases('Dean stream', [135,180,225], [6,7], [9,10], '.')
 
 # run the simulations with multi-threading
