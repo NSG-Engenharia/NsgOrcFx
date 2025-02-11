@@ -5,11 +5,13 @@ src/NsgOrcFx/__init__.py
 src/NsgOrcFx/auxfuncs.py
 src/NsgOrcFx/classes.py
 src/NsgOrcFx/constants.py
+src/NsgOrcFx/constraintloads.py
 src/NsgOrcFx/environment.py
 src/NsgOrcFx/fatigue.py
 src/NsgOrcFx/loadcases.py
 src/NsgOrcFx/main.py
 src/NsgOrcFx/modal.py
+src/NsgOrcFx/multiproc.py
 src/NsgOrcFx/objauxfuncs.py
 src/NsgOrcFx/params.py
 src/NsgOrcFx/raos.py
@@ -29,4 +31,5 @@ tests/test2_searchwave.py
 tests/test3_generate-loadcases.py
 tests/test4_modal-analysis.py
 tests/test5_fatigue.py
-tests/test5_rao-plots.py
+tests/test6_rao-plots.py
+tests/test7_constraint-load-results.py
