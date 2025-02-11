@@ -30,6 +30,7 @@ from .loadcases import *
 from .utils import *
 from .raos import *
 from .constraintloads import ExtremeLoadsFromConstraints
+from .multiproc import ProcMultiThread
 
 # ======= CONSTANTS ======== #
 requiredOrcFxVer = '11.3a'
