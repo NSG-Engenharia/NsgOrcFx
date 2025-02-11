@@ -142,6 +142,14 @@ def ProcMultiThread(
         n_threads: None|int=None,
         del_success_dat: bool=True
         ):
+    """
+    Run multi-threading simulations. 
+    ATTENTION! Ensure that your model is thread-safe, which may be an issue when using external functions 
+    * dat_files_path: path to the folder containing the .dat files to be simulated
+    * out_path: output folder to save the simulation (.sim) files
+    * n_threads: number of threads to be used; if `None` (default), will be set to the number of computer cores minus 1
+    * del_success_dat: if the .dat files successfully simulated should be deleted
+    """
     # global procResults, nProcs, pathModelFiles, outputFolder, delSuccessRunLCs
 
     
