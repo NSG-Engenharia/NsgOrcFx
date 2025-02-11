@@ -35,9 +35,11 @@ line.PolarReferenceAxes[1] = 'Global Axes'
 line.PolarR[1], line.EndBY, line.EndBHeightAboveSeabed = 155, 0, 0
 line.Length[0] = 200
 
-
-# if __name__ == '__main__':
+# generate the load cases
 model.GenerateLoadCases('Dean stream', [135,180,225], [6,7], [9,10], '.')
+
+# run the simulations with multi-threading
 ofx.ProcMultiThread('.','.')
 
+# extract extreme loads for the constraint
 ofx.ExtremeLoadsFromConstraints('.','.\Results.xlsx')
