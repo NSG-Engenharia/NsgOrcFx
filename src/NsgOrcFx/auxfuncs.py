@@ -229,14 +229,17 @@ def GetLargestRiseAndFall(
     #so I don't actually need to report any of the individual waves 
     #so I set the search parameters to arbitrarily high values:
     env.WaveSearchMinHeight = 1e9
-    if env.NumberOfWaveTrains == 1:
+    # if env.NumberOfWaveTrains == 1:
+    # suggestion of 2nd condition given by Daniel Lobo (4Subsea).
+    # to avoid error when more than 1 "Number of wave direction" is defined. Thanks, Daniel!!!
+    if env.NumberOfWaveTrains == 1 and env.WaveNumberOfSpectralDirections == 1: 
         env.WaveSearchMinSteepness = 1e9
 
     file = filename + '.txt'
     try:   
         model.SaveWaveSearchSpreadsheet(file)
-    except:
-        raise Exception(f'Error when saving temporary file {file}.')
+    except Exception as err:
+        raise Exception(f'Error when searching for the largest rise/fall and saving in {file}. \n{err=} \n{type(err)=}')
 
     #parse the txt file to find the line with the largest rise and fall
     with open(file) as f:
