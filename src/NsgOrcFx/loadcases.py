@@ -18,6 +18,9 @@ def __setEnvironment(
         waveTrainIndex: int = 0,
         extremeWavePosition: list[float] = [0.,0.]        
         ):
+    """
+    `waveTrainIndex` was keept for legacy compatibility
+    """
     env = model.environment
     env.WaveDirection = waveDirection
 
@@ -43,7 +46,7 @@ def __setEnvironment(
         else:
             SetReducedSimDuration(
                 model, reducedIrregDuration, stormDuration, 
-                largestFallOrRise, waveTrainIndex, extremeWavePosition)
+                largestFallOrRise, extremeWavePosition)
 
 
 
@@ -76,7 +79,7 @@ def GenLoadCases(
     * calcGamma: if the gamma should be calculated base on formula gamma = 6.4 x Tp ^ -0.491
     * reducedIrregDuration: if not `None`, the simulation duration, reduced based on the largest 'fall' of 'rise' during the `simDuration`
     * largestFallOrRise: if `reducedIrregDuration != None`, if the extreme event is searched based on the largest 'fall' or 'rise'
-    * waveTrainIndex: which Wave Train should be considered
+    * waveTrainIndex: keept for legacy compatibility. This input is ignored. The "Wave time origin" for all wave trains are changed when `reducedIrregDuration = True`.
     * extremeWavePosition: if `reducedIrregDuration != None`, position to search for the largest 'rise' or 'fall'
     """
     __caseListFile ='_CaseList.xlsx' # file to save the cases list
