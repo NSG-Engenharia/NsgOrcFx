@@ -1,6 +1,16 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-dir]
+"" = "src"
+
 [project]
 name = "NsgOrcFx"
-version = "1.0.31"
+version = "1.0.32"
 authors = [
   { name="NSG Engenharia", email="software@nsgeng.com" },
 ]
