@@ -27,8 +27,12 @@ class OrcaFlexConstraint(OrcaFlexObject):
 class OrcaFlexLineObject(OrcaFlexObject, _ofx.OrcaFlexLineObject):
     data: params._DataLineObject
 
+    @property
+    def TotalLength(self) -> float:
+        """Total length of the line"""
+        return self.CumulativeLength[-1]
+
     def totalLength(self) -> float:
-        self.__init__()
         """Total length of the line"""
         return self.CumulativeLength[-1]
 
