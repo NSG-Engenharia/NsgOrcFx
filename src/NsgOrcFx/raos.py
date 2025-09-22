@@ -157,17 +157,15 @@ class RaoPlot():
                     _T = T
                     _A = A
                 # print(T)
-                ax.plot(_T, _A, fmt, label=f'{Heading:.0f}' + '°', linewidth=lw)
+                ax.plot(_T, _A, fmt, label=f'{Heading:.1f}' + '°', linewidth=lw)
                 # print(T, A)
                 ax.set_title(DOF) 
-            if row == 1: 
-                ax.set_xlabel(self.WaveRefQty)
-                if col == 1: 
-                    ax.legend(loc = 'center left',bbox_to_anchor=(1, 0.5),title='Direction')             
-            else:        ax.set_xticklabels([])
+
+            if row == 1 and col == 1: ax.legend(loc = 'center left',bbox_to_anchor=(1, 0.5),title='Direction') 
+            
+            if row == 2: ax.set_xlabel(self.WaveRefQty)
+
             ax.set_ylabel(colUnity[col])
-            #ax.set_ylim([-180,None])
-            #ax.set_xlim([0,maxT])
             ax.grid()
 
         if vt.NumberOfDraughts == 1: 
@@ -176,7 +174,7 @@ class RaoPlot():
             figtitle = f'{vt.name} - {vt.SelectedDraught} {paramTitle}'
 
         fig.suptitle(figtitle)
-        if self.SavePlots: self.SaveFig(f'{vt.name}_{figtitle}')
+        if self.SavePlots: self.SaveFig(figtitle)
         if self.ShowPlots: plt.show()    
 
     # === MAIN === #
