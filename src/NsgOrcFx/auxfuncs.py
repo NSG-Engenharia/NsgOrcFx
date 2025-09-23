@@ -3,6 +3,7 @@ import ctypes
 import numpy as np
 import OrcFxAPI as __ofx
 from . import constants
+from . import utils
 
 __char = ctypes.c_wchar
 __letters = 'abcdefghijklimnoprstuvwxyz'
@@ -235,7 +236,8 @@ def GetLargestRiseAndFall(
     if env.NumberOfWaveTrains == 1 and env.WaveNumberOfSpectralDirections == 1: 
         env.WaveSearchMinSteepness = 1e9
 
-    file = filename + '.txt'
+    # file = filename + '.txt'
+    file = utils.getAvailableFileName(filename, '.txt', forceRandom=True)
     try:   
         model.SaveWaveSearchSpreadsheet(file)
     except Exception as err:

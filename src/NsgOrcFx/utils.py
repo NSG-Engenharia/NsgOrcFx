@@ -97,3 +97,44 @@ def creatEvenlySpacedData(
 def getFileExtension(file: str) -> str:
     _, extension = os.path.splitext(file)
     return extension
+
+
+def getAvailableFileName(
+        baseName: str, 
+        extension: str, 
+        folder: str|None = None,
+        randomNumberDigits: int = 10,
+        forceRandom: bool = False
+        ) -> str:
+    """
+    Returns an available file name adding a random number at the end if needed
+    * baseName: file name without extension
+    * extension: file extension with or without the dot ('.')
+    * folder: if provided, the folder where to check if the file exists. If not provided, the current folder is used.
+    * randomNumberDigits: number of digits of the random number to be added at the end of the file name if needed
+    * forceRandom: if True, a random number is always added at the end of the file name
+    * return: the available file name with extension (but without the folder path)
+    """
+    if not extension.startswith('.'):
+        extension = '.' + extension
+
+    if folder is None:
+        folder = os.getcwd()
+    
+    fullPath = os.path.join(folder, baseName + extension)
+    if not os.path.isfile(fullPath) and not forceRandom:
+        return baseName + extension
+    
+    def getRandomNumber(nDigits: int) -> str:
+        from random import randint
+        rangeStart = 10**(nDigits-1)
+        rangeEnd = (10**nDigits)-1
+        return str(randint(rangeStart, rangeEnd))
+
+    cont = getRandomNumber(randomNumberDigits)
+    while True:
+        newFileName = f'{baseName}_{cont}{extension}'
+        fullPath = os.path.join(folder, newFileName)
+        if not os.path.isfile(fullPath):
+            return newFileName
+        cont = getRandomNumber(randomNumberDigits)

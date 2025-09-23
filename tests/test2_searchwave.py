@@ -18,7 +18,7 @@ model.environment.data.WaveTp = 8
 model.SetReducedSimulationDuration(200)
 
 # save data file to check the wave history
-model.Save('reduced.dat')
+model.Save(r'.\tests\tmptestfiles\reduced.dat')
 
 # after executing this code, open the generated data file
 # then open Environment -> Waves preview, and set duration of 200s 
