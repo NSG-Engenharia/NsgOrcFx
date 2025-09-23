@@ -120,7 +120,7 @@ class RaoPlot():
         '''
         path = fr'{self.raoOutputFolder}\\{filename}.{self.FigFormat}'
         print(f'Saving file {os.path.basename(path)} ...', end=' ')
-        try: plt.savefig(path)
+        try: plt.savefig(path,bbox_inches='tight')
         except: print('Erro')
         else:   print('Done')
 
@@ -157,22 +157,24 @@ class RaoPlot():
                     _T = T
                     _A = A
                 # print(T)
-                ax.plot(_T, _A, fmt, label=str(Heading), linewidth=lw)
+                ax.plot(_T, _A, fmt, label=f'{Heading:.1f}' + '°', linewidth=lw)
                 # print(T, A)
                 ax.set_title(DOF) 
-            if row == 2: 
-                ax.set_xlabel(self.WaveRefQty)
-                if col == 0: ax.legend()                
-            else:        ax.set_xticklabels([])
+
+            if row == 1 and col == 1: ax.legend(loc = 'center left',bbox_to_anchor=(1, 0.5),title='Direction') 
+            
+            if row == 2: ax.set_xlabel(self.WaveRefQty)
+
             ax.set_ylabel(colUnity[col])
-            ax.set_ylim([0,None])
-            ax.set_xlim([0,maxT])
             ax.grid()
 
-        if vt.NumberOfDraughts == 1: figtitle = f'{vt.name}\n{paramTitle}'
-        else:                        figtitle = f'{vt.name} - {vt.SelectedDraught}\n{paramTitle}'
+        if vt.NumberOfDraughts == 1: 
+            figtitle = f'{vt.name} {paramTitle}'
+        else:                        
+            figtitle = f'{vt.name} - {vt.SelectedDraught} {paramTitle}'
+
         fig.suptitle(figtitle)
-        if self.SavePlots: self.SaveFig(f'{vt.name}_{paramTitle}')
+        if self.SavePlots: self.SaveFig(figtitle)
         if self.ShowPlots: plt.show()    
 
     # === MAIN === #
