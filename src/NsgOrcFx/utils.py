@@ -138,3 +138,34 @@ def getAvailableFileName(
         if not os.path.isfile(fullPath):
             return newFileName
         cont = getRandomNumber(randomNumberDigits)
+
+
+def angleFromDirName(dirName: str) -> float:
+    """
+    Returns the angle in degrees from a direction name
+    * dirName: direction name, e.g., 'N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'
+    * return: angle in degrees (0 = North, clockwise)
+    """
+    dirName = dirName.upper()
+    dirAngles = {
+        'N': 0.0,
+        'NNE': 22.5,
+        'NE': 45.0,
+        'ENE': 67.5,
+        'E': 90.0,
+        'ESE': 112.5,
+        'SE': 135.0,
+        'SSE': 157.5,
+        'S': 180.0,
+        'SSW': 202.5,
+        'SW': 225.0,
+        'WSW': 247.5,
+        'W': 270.0,
+        'WNW': 292.5,
+        'NW': 315.0,
+        'NNW': 337.5
+    }
+    if dirName not in dirAngles:
+        raise Exception(f'Error! Direction name {dirName} not recognized. Valid names are: {list(dirAngles.keys())}.')
+    
+    return dirAngles[dirName]
