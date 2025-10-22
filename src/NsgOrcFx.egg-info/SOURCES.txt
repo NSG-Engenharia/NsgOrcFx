@@ -19,6 +19,7 @@ src/NsgOrcFx/raos_old.py
 src/NsgOrcFx/sncurves.py
 src/NsgOrcFx/sortlines.py
 src/NsgOrcFx/utils.py
+src/NsgOrcFx/vessel.py
 src/NsgOrcFx/weight.py
 src/NsgOrcFx/weightaux.py
 src/NsgOrcFx.egg-info/PKG-INFO
@@ -33,3 +34,5 @@ tests/test4_modal-analysis.py
 tests/test5_fatigue.py
 tests/test6_rao-plots.py
 tests/test7_constraint-load-results.py
+tests/test8_HsTp-wave-selection.py
+tests/test8_HsTp-wave-selection_old.py

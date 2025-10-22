@@ -286,6 +286,47 @@ class Model(orc.Model):
             raoPlots.GetRAOData(vt)
 
 
+    def ProcessExtremeResponses(
+            self,
+            vesselName: str,
+            position: list[float],
+            waveDirsHsTp: dict[str, list[tuple[float, float]]],
+            outFile: str,
+            outFolderLCs: str|None = None,
+            stormDuration: float = 3.0,
+            northDir: float|None = None,
+            waveTrainIndex: int|None = None,
+            ):
+        """
+        Process extreme responses for the vessel.
+        * model: OrcaFlex model object
+        * position: list with the [x,y,z] coordinates of the response output point,
+            relative to the vessel origin
+        * vesselName: name of the vessel in the model
+        * waveDirsHsTp: dictionary with the wave directions (coming from) as keys,
+            and a list of (Hs,Tp) tuples as values
+        * outFile: path to the output Excel file
+        * outFolderLCs: folder to save the load case files. If None, load case files are not saved.
+        * stormDuration: duration of the storm for extreme response calculations (hours)
+        * northDir: North direction from the x-axis, as defined by the OrcaFlex convention.
+            If None, use the model definition.
+        * waveTrainIndex: index of the wave train to use. If None, use the model definition.
+        """
+        from .vessel import VesselResponseList
+        response = VesselResponseList()
+        response.ProcessExtremeResponses(
+            model=self,
+            vesselName=vesselName,
+            position=position,
+            waveDirsHsTp=waveDirsHsTp,
+            outFile=outFile,
+            outFolderLCs=outFolderLCs,
+            stormDuration=stormDuration,
+            northDir=northDir,
+            waveTrainIndex=waveTrainIndex
+        )
+
+
 class LineSelection(list[OrcaFlexLineObject]):
     def __init__(self, model: Model):
         super().__init__()
