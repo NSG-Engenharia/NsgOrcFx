@@ -382,7 +382,7 @@ class VesselResponseList(dict[str, VesselResponses]):
         if waveTrainIndex is not None:
             model.environment.SelectedWaveIndex = waveTrainIndex
 
-        from src.NsgOrcFx.auxfuncs import isRegularWave
+        from .auxfuncs import isRegularWave
         if isRegularWave(model.environment.WaveType):
             raise Exception('This script is only for irregular waves (e.g., JONSWAP).')
 
