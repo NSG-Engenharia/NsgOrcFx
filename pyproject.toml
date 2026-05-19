@@ -10,7 +10,7 @@ where = ["src"]
 
 [project]
 name = "NsgOrcFx"
-version = "1.0.35"
+version = "1.0.36"
 authors = [
   { name="NSG Engenharia", email="software@nsgeng.com" },
 ]
