@@ -195,7 +195,7 @@ def SetReducedSimDuration(
     largestTz = 0
     for i in range(env.NumberOfWaveTrains):
         env.SelectedWaveTrainIndex = i
-        env.WaveTimeOrigin += -tSel + reducedDuration/2 + general.StageStartTime[0]
+        env.WaveTimeOrigin += -tSel + reducedDuration/2 + general.StageEndTime[0]
         if not isRegularWave(env.WaveType):
             largestTz = max(largestTz, env.WaveTz)
 
