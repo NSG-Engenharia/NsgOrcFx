@@ -166,6 +166,7 @@ def SetReducedSimDuration(
         Obs.: the Tp value defined in the model will be used for the Stage 0.
     '''        
     env = model.environment
+    general = model.general
     # previousWaveTrainIndex = env.SelectedWaveTrainIndex
     # env.SelectedWaveTrainIndex = waveTrainIndex
     hasIrregularWave = False
@@ -194,12 +195,11 @@ def SetReducedSimDuration(
     largestTz = 0
     for i in range(env.NumberOfWaveTrains):
         env.SelectedWaveTrainIndex = i
-        env.WaveTimeOrigin += -tSel + reducedDuration/2
+        env.WaveTimeOrigin += -tSel + reducedDuration/2 + general.StageEndTime[0]
         if not isRegularWave(env.WaveType):
             largestTz = max(largestTz, env.WaveTz)
-    
+
     # Tz = env.WaveTz
-    general = model.general
     general.StageDuration[0] = largestTz # Tz
     general.StageDuration[1] = reducedDuration
 
