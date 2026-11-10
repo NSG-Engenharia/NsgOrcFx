@@ -45,7 +45,7 @@ vesselName = vessel.name
 model.environment.WaveType = 'JONSWAP'
 
 # set north direction (required for wave direction definition)
-model.general.NorthDirectionDefined = 'Yes'
+#model.general.NorthDirectionDefined = 'Yes'
 model.general.NorthDirection = 90
 
 # process extreme responses
@@ -53,7 +53,7 @@ model.ProcessExtremeResponses(
     vesselName, 
     [35, 0, 0], # position where responses are extracted
     waveDirsHsTp, # wave directions with Hs and Tp values
-    r".\tests\tmptestfiles\vessel response.xlsx", # output excel file
+    r".\tests\tmptestfiles\test8 vessel response.xlsx", # output excel file
     )
 
 # the generated excel file lists the extreme responses for all wave conditions defined above

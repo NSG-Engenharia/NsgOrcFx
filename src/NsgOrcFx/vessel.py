@@ -178,6 +178,7 @@ class VesselResponses:
     waveDir: str
     Hs: float
     Tp: float
+    gamma: float
 
     def to_multiheader_list(self) -> list[tuple[str, str, str]]:
         """
@@ -205,7 +206,7 @@ class VesselResponses:
         return values
 
     @staticmethod
-    def from_file(path: str, draught: str, waveDir: str, Hs: float, Tp: float) -> 'VesselResponses':
+    def from_file(path: str, draught: str, waveDir: str, Hs: float, Tp: float, gamma: float) -> 'VesselResponses':
         """
         Import the values from the specified file path
         """
@@ -234,7 +235,7 @@ class VesselResponses:
 
         newObj = VesselResponses(
             positionExtremes, velocityExtremes, accelerationExtremes, 
-            draught=draught, waveDir=waveDir, Hs=Hs, Tp=Tp)
+            draught=draught, waveDir=waveDir, Hs=Hs, Tp=Tp, gamma=gamma)
         
         return newObj
 
@@ -247,9 +248,10 @@ class VesselResponseList(dict[str, VesselResponses]):
             draught: str,
             waveDir: str,
             Hs: float,
-            Tp: float
+            Tp: float,
+            gamma: float
             ) -> None:
-        self[loadCase] = VesselResponses.from_file(path, draught, waveDir, Hs, Tp)
+        self[loadCase] = VesselResponses.from_file(path, draught, waveDir, Hs, Tp, gamma)
 
     def to_excel(
             self, 
@@ -291,17 +293,18 @@ class VesselResponseList(dict[str, VesselResponses]):
         for wa, cell in resultsByDir.items():
             if wa == 'Extreme Quantity':
                 continue
-            for rst in ['Max. Value', 'Draught', 'Dir.', 'Hs', 'Tp', 'Load Case']:
+            for rst in ['Max. Value', 'Draught', 'Dir.', 'Hs', 'Tp','Gamma', 'Load Case']:
                 cols.append((wa, rst))
-            rows = [[],[],[],[],[],[]]
+            rows = [[],[],[],[],[],[],[]]
             for item in cell:
                 rows[0].append(item[0]) # max value
-                draught, Hs, Tp = item[1]
+                draught, Hs, Tp, gamma = item[1]
                 rows[1].append(draught)
                 rows[2].append(wa)
                 rows[3].append(Hs)
                 rows[4].append(Tp)
-                rows[5].append(item[2]) # load case
+                rows[5].append(gamma)
+                rows[6].append(item[2]) # load case
 
             data.extend(rows) # max values
         headers = pd.MultiIndex.from_tuples(cols, names=['Direction', 'Parameter'])
@@ -337,13 +340,13 @@ class VesselResponseList(dict[str, VesselResponses]):
             values.append(resp.positionExtremes.maximum_amp.rotation_combined())
 
             LCs.append(lc)
-            row1stCol.append((resp.draught, resp.waveDir, resp.Hs, resp.Tp))
+            row1stCol.append((resp.draught, resp.waveDir, resp.Hs, resp.Tp, resp.gamma))
             data.append(values)
 
         # add first column (Load Case info)
         rowHeaders = pd.MultiIndex.from_tuples(
             row1stCol,
-            names=['Draught', 'Wave dir. (from)', 'Hs [m]', 'Tp [s]']
+            names=['Draught', 'Wave dir. (from)', 'Hs [m]', 'Tp [s]', 'Gamma']
             )
 
         # create dataframe
@@ -356,7 +359,7 @@ class VesselResponseList(dict[str, VesselResponses]):
             model: _ofx.Model,
             vesselName: str,
             position: list[float],
-            waveDirsHsTp: dict[str, list[tuple[float, float]]],
+            waveParameters: dict[str, list[tuple[float, float]]] | dict[str, list[tuple[float, float, float]]],
             outFile: str,
             outFolderLCs: str|None = None,
             stormDuration: float = 3.0,
@@ -369,8 +372,8 @@ class VesselResponseList(dict[str, VesselResponses]):
         * position: list with the [x,y,z] coordinates of the response output point,
             relative to the vessel origin
         * vesselName: name of the vessel in the model
-        * waveDirsHsTp: dictionary with the wave directions (coming from) as keys,
-            and a list of (Hs,Tp) tuples as values
+        * waveParameters: dictionary with the wave directions (coming from) as keys,
+            and a list of (Hs,Tp) or (Hs,Tp,Gamma) tuples as values. If Gamma is not provided, the value in OrcaFlex model is used.
         * outFile: path to the output Excel file
         * outFolderLCs: folder to save the load case files. If None, load case files are not saved.
         * stormDuration: duration of the storm for extreme response calculations (hours)
@@ -388,7 +391,7 @@ class VesselResponseList(dict[str, VesselResponses]):
 
         vessel: _ofx.OrcaFlexVesselObject = model[vesselName]
         if northDir is None:
-            if model.general.NorthDirectionDefined == 'No':
+            if model.general.NorthDirection == _ofx.OrcinaDefaultReal():
                 raise Exception('Error! The model North Direction is not defined, so it must be provided when running this script.')
             northDir = model.general.NorthDirection
 
@@ -406,18 +409,28 @@ class VesselResponseList(dict[str, VesselResponses]):
         for dd in draughts:
             print(f'Processing load cases for vessel "{vesselName}", draught "{dd}"', end='')
             vessel.Draught = dd # set vessel draught
-            for waName, hs_tp_list in waveDirsHsTp.items():
+            for waName, hs_tp_list in waveParameters.items():
                 # set wave direction
                 waveAzimuth = _utils.angleFromDirName(waName)
                 waveDir = (northDir - waveAzimuth + 180) % 360 # wave direction (going to)
                 model.environment.WaveDirection = waveDir
 
-                for hs, tp in hs_tp_list:
-                    caseName = f'{vesselName}_Draught-{dd}_{waName}_Hs{hs:.1f}m_Tp{tp:.1f}s'
+                for hs_tp_tuple in hs_tp_list:
+
+                    hs, tp = hs_tp_tuple[0], hs_tp_tuple[1]
+
+                    if len(hs_tp_tuple) == 2:
+                        gamma = model.environment.WaveGamma
+
+                    elif len(hs_tp_tuple) == 3:
+                        gamma = hs_tp_tuple[2]
+
+                    caseName = f'{vesselName}_Draught-{dd}_{waName}_Hs{hs:.1f}m_Tp{tp:.1f}s_gamma{gamma:.1f}'
                     # print(f'Generating load case: {caseName}')
 
                     # set wave parameters
                     model.environment.WaveHs = hs
+                    model.environment.WaveGamma = gamma
                     model.environment.WaveTp = tp
 
                     # save files
@@ -426,7 +439,7 @@ class VesselResponseList(dict[str, VesselResponses]):
                     vessel.SaveSpectralResponseSpreadsheet(tmpFileName)
 
                     # read results
-                    self.add_from_file(tmpFileName, caseName, dd, waName, hs, tp)
+                    self.add_from_file(tmpFileName, caseName, dd, waName, hs, tp, gamma)
 
                     # cleanup temporary file
                     os.remove(tmpFileName)
@@ -444,5 +457,5 @@ class VesselResponseList(dict[str, VesselResponses]):
 
         # export results to excel
         print(f'Exporting results to Excel file: "{outFile}" ...', end='', flush=True)
-        self.to_excel(outFile, waveDirsHsTp.keys())
+        self.to_excel(outFile, waveParameters.keys())
         print(' done.')

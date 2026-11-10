@@ -290,7 +290,7 @@ class Model(orc.Model):
             self,
             vesselName: str,
             position: list[float],
-            waveDirsHsTp: dict[str, list[tuple[float, float]]],
+            waveParameters: dict[str, list[tuple[float, float]]] | dict[str, list[tuple[float, float, float]]],
             outFile: str,
             outFolderLCs: str|None = None,
             stormDuration: float = 3.0,
@@ -303,8 +303,8 @@ class Model(orc.Model):
         * position: list with the [x,y,z] coordinates of the response output point,
             relative to the vessel origin
         * vesselName: name of the vessel in the model
-        * waveDirsHsTp: dictionary with the wave directions (coming from) as keys,
-            and a list of (Hs,Tp) tuples as values
+        * waveParameters: dictionary with the wave directions (coming from) as keys,
+            and a list of (Hs,Tp) or (Hs,Tp,Gamma) tuples as values. If the Gamma value is not provided, the value in the OrcaFlex model will be used.
         * outFile: path to the output Excel file
         * outFolderLCs: folder to save the load case files. If None, load case files are not saved.
         * stormDuration: duration of the storm for extreme response calculations (hours)
@@ -318,7 +318,7 @@ class Model(orc.Model):
             model=self,
             vesselName=vesselName,
             position=position,
-            waveDirsHsTp=waveDirsHsTp,
+            waveParameters=waveParameters,
             outFile=outFile,
             outFolderLCs=outFolderLCs,
             stormDuration=stormDuration,
