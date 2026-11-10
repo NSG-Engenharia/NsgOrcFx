@@ -359,7 +359,7 @@ class VesselResponseList(dict[str, VesselResponses]):
             model: _ofx.Model,
             vesselName: str,
             position: list[float],
-            waveParameters: dict[str, list[tuple[float, float]]] | dict[str, list[tuple[float, float, float]]],
+            waveParameters: dict[str|float|int, list[tuple[float, float]]] | dict[str|float|int, list[tuple[float, float, float]]],
             outFile: str,
             outFolderLCs: str|None = None,
             stormDuration: float = 3.0,
@@ -372,7 +372,7 @@ class VesselResponseList(dict[str, VesselResponses]):
         * position: list with the [x,y,z] coordinates of the response output point,
             relative to the vessel origin
         * vesselName: name of the vessel in the model
-        * waveParameters: dictionary with the wave directions (coming from) as keys,
+        * waveParameters: dictionary with the wave directions (coming from) as keys (string or number),
             and a list of (Hs,Tp) or (Hs,Tp,Gamma) tuples as values. If Gamma is not provided, the value in OrcaFlex model is used.
         * outFile: path to the output Excel file
         * outFolderLCs: folder to save the load case files. If None, load case files are not saved.
@@ -411,7 +411,15 @@ class VesselResponseList(dict[str, VesselResponses]):
             vessel.Draught = dd # set vessel draught
             for waName, hs_tp_list in waveParameters.items():
                 # set wave direction
-                waveAzimuth = _utils.angleFromDirName(waName)
+                if waName is None:
+                    raise Exception('Error! Wave direction must be provided.')
+                elif isinstance(waName, (float, int)):
+                    waveAzimuth = float(waName)
+                elif isinstance(waName, str):
+                    waveAzimuth = _utils.angleFromDirName(waName)
+                else:
+                    raise Exception('Error! Wave direction must be a string or a number.')
+                
                 waveDir = (northDir - waveAzimuth + 180) % 360 # wave direction (going to)
                 model.environment.WaveDirection = waveDir
 
