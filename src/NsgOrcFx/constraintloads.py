@@ -129,7 +129,7 @@ def __is_resultant_load(label: str) -> bool:
     return label == 'F' or label == 'M'
  
 def __getFileList(path: str) -> list[str]:
-    return [f for f in os.listdir(path) if f[-4:] == '.sim']
+    return [os.path.join(path, f) for f in os.listdir(path) if f[-4:] == '.sim']
 
 def __copy(fromExtremes: list[list[float]]) -> list:
     newExtremes = []
@@ -282,7 +282,6 @@ def __getConstraintList(model: ofx.Model, constraints: list[str]) -> list[str]:
             
 def __procFiles(
         files: list[str], 
-        simFilesFolder: str, 
         constraints: list[str],
         latestWave: bool = True,
         includeStatics: bool = True,
@@ -293,11 +292,10 @@ def __procFiles(
 
     n = len(files)
     for i, f in enumerate(files):
+        LC = f.split('\\')[-1] # the Load Case title is assumed to be the file name
         print(f'Processing file ({i+1}/{n}): "{f}" ...', end=' ', flush=True)
-        LC = f # the Load Case title is assumed to be the file name
 
-        path = os.path.join(simFilesFolder, f)
-        model = ofx.Model(path)
+        model = ofx.Model(f)
         if len(constraints) == 0 and i == 0:
             __getConstraintList(model, constraints)
 
@@ -406,11 +404,8 @@ def __getConstraintExtremes(
 
     return extremeResults, th_results, sampleTimes, staticResults
 
-
-
-
 def ExtremeLoadsFromConstraints(
-        sim_files_folder: str, 
+        sim_files_folder: str|list[str], 
         out_file: str, 
         constraints: None|list[str] = None, 
         latest_wave: bool=True,
@@ -421,7 +416,7 @@ def ExtremeLoadsFromConstraints(
         ):
     """
     Extract Constraint extreme (max. and min.) loads (force and moment) from OrcaFLex simulation files
-    * sim_files_folder: path to the .sim files
+    * sim_files_folder: path to the .sim files; or a list of paths to the .sim files
     * out_file: file to write the results (.xlsx or .csv)
     * constraints: list of constraint object names (OrcaFlex) to gather the result from; 
     if `None`, results will be extracted for all constraint in the first .sim file
@@ -439,17 +434,21 @@ def ExtremeLoadsFromConstraints(
 
     Obs.: Assumes all .sim files have the same Constraint objects and unit definitions 
     """
-    files = __getFileList(sim_files_folder)
+    
+    if isinstance(sim_files_folder, str):
+        files = __getFileList(sim_files_folder)
+    else:
+        files = sim_files_folder
 
-    units = _Units(os.path.join(sim_files_folder,files[0]))
-
+    units = _Units(files[0])
+    
     global resultDefinitions
     resultDefinitions = ResultDefinitions(units, in_frame, local)
 
     if constraints == None: constraints = []
 
     extremeByObj, completeRstList = __procFiles(
-        files, sim_files_folder, constraints, latest_wave, 
+        files, constraints, latest_wave, 
         include_statics, invert_signs)
     
     __saveToFile(extremeByObj, completeRstList, out_file, constraints, units, include_statics)

@@ -36,10 +36,11 @@ line.PolarR[1], line.EndBY, line.EndBHeightAboveSeabed = 155, 0, 0
 line.Length[0] = 200
 
 # generate the load cases (Example #3)
-model.GenerateLoadCases('Dean stream', [135,180,225], [6,7], [9,10], '.')
+out_folder = '.\\tests\\test7_output'
+model.GenerateLoadCases('Dean stream', [135,180,225], [6,7], [9,10], out_folder)
 
 # run the simulations with multi-threading
-ofx.ProcMultiThread('.','.')
+ofx.ProcMultiThread(out_folder, '.')
 
 # extract extreme loads for the constraint
-ofx.ExtremeLoadsFromConstraints('.','.\Results.xlsx')
+ofx.ExtremeLoadsFromConstraints(out_folder, f'{out_folder}\\Test7.xlsx')
