@@ -273,7 +273,7 @@ model.general.NorthDirection = 90
 model.ProcessExtremeResponses(
     vesselName, 
     [35, 0, 0], # position where responses are extracted
-    waveDirsHsTp, # wave directions with Hs and Tp values
+    waveDirsHsTpGamma, # wave directions with (Hs, Tp, Gamma) values
     r".\tests\tmptestfiles\vessel response.xlsx", # output excel file
     )
 
@@ -281,3 +281,6 @@ model.ProcessExtremeResponses(
 # and the load cases that lead to the maximum value for each response DOF parameter
 # in addition to the results directly provided by OrcaFlex, rotation (vectorial sum of roll and pitch) is included
 ```
+
+## Development
+Regression tests and contribution guidelines: [documentation/testing.md](https://github.com/NSG-Engenharia/NsgOrcFx/blob/main/documentation/testing.md)
