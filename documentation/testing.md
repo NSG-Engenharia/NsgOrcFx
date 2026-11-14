@@ -79,6 +79,12 @@ the reference file.
 
 ## Workflow for a change in the package
 
+**The regression tests must be run for every change to the package code**, however small
+(bug fixes, refactoring, changed defaults, dependency or OrcaFlex/Python version updates).
+Only documentation-only changes are exempt. If the tests cannot be run (e.g. no OrcaFlex licence
+available, so they are skipped), the change is not verified. It must not be merged or released
+until the tests have run and passed.
+
 1. Before changing anything, run `py -m pytest` and confirm all tests pass with **0 skipped**
    (except the opt-in examples).
 2. Make the change.

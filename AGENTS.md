@@ -16,7 +16,14 @@ Every original `OrcFxAPI` attribute and method must remain accessible in the sam
 `NsgOrcFx.Model` subclasses `OrcFxAPI.Model`, and `from OrcFxAPI import *` is re-exported.
 
 **Users depend on the published results.** Any change must preserve previous results unless it is
-an intentional correction. Run the regression tests (below) before and after every change.
+an intentional correction.
+
+> **Rule: run the regression tests (`py -m pytest`) before and after EVERY change to the package.**
+> This includes small changes: one-line fixes, refactoring, renaming internals, changes to defaults,
+> dependency or Python/OrcaFlex version bumps. The only exceptions are changes limited to
+> documentation or comments.
+> If the tests cannot run (e.g. no OrcaFlex licence, so they are skipped), the change is **not
+> verified**. Say so explicitly. Do not report it as tested, commit it as verified, or release it.
 
 ## Repository layout
 
